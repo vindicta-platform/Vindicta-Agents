@@ -5,7 +5,7 @@
     Reviews roadmaps and prepares sprint issues
 #>
 
-$ErrorActionPreference = "Stop"
+$ErrorActionPreference = "Continue"
 $LogPath = Join-Path $PSScriptRoot "..\logs"
 $LogFile = Join-Path $LogPath "po-sprint-$(Get-Date -Format 'yyyy-MM-dd').log"
 
@@ -29,9 +29,11 @@ $repos = @(
 try {
     foreach ($repo in $repos) {
         Log "Checking $repo ROADMAP.md..."
-        $roadmap = gh api -X GET "/repos/vindicta-platform/$repo/contents/ROADMAP.md" --jq '.content' 2>&1
+        $roadmap = gh api "repos/vindicta-platform/$repo/contents/ROADMAP.md" --jq '.name' 2>$null
         if ($LASTEXITCODE -eq 0) {
             Log "  Found ROADMAP.md"
+        } else {
+            Log "  No ROADMAP.md or repo not found"
         }
     }
     
