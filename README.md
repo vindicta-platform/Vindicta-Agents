@@ -2,47 +2,52 @@
 
 > AI Agent Team for Vindicta Platform Delivery
 
-This repository contains the configuration and instructions for the AI agents that collaboratively manage the Vindicta Platform.
+## Structure
+
+```
+.specify/memory/
+└── constitution.md       # Unified rules for all agents
+
+.agent/workflows/
+├── adl-standup.md        # Daily standup (9:00 AM)
+├── adl-pr-review.md      # PR review sweep (5:00 PM)
+├── adl-weekly-report.md  # Friday velocity report
+├── po-sprint-planning.md # Monday sprint planning
+├── po-roadmap-update.md  # Daily roadmap sync
+└── po-release-management.md # Milestone releases
+
+agents/
+├── agile-delivery-lead/
+│   └── AGENT.md          # Role identity only
+└── product-owner/
+    └── AGENT.md          # Role identity only
+```
 
 ## Agent Team
 
-| Agent | Role | Primary Focus |
-|-------|------|---------------|
-| **Agile Delivery Lead** | Process & Delivery | Sprint execution, blockers, velocity |
-| **Product Owner** | Vision & Priority | Backlog, roadmap, stakeholder value |
+| Agent | Role | Workflows |
+|-------|------|-----------|
+| **Agile Delivery Lead** | Execution & Process | `/adl-standup`, `/adl-pr-review`, `/adl-weekly-report` |
+| **Product Owner** | Vision & Priority | `/po-sprint-planning`, `/po-roadmap-update`, `/po-release-management` |
 
-## Agent Files
+## Usage
+
+Workflows are Antigravity-compatible. Invoke with slash commands:
 
 ```
-agents/
-├── agile-delivery-lead/
-│   ├── AGENT.md          # Agent identity and instructions
-│   ├── DAILY_WORKFLOW.md # Daily standup routine
-│   └── COLLABORATION.md  # How to work with other agents
-├── product-owner/
-│   ├── AGENT.md          # Agent identity and instructions
-│   ├── DAILY_WORKFLOW.md # Daily planning routine
-│   └── COLLABORATION.md  # How to work with other agents
-└── shared/
-    └── TEAM_CHARTER.md   # Shared principles and escalation
+/adl-standup      # Execute morning standup
+/adl-pr-review    # Execute PR review sweep
+/po-sprint-planning  # Execute Monday planning
 ```
 
-## Workflows Reference
+## Constitution
 
-Agents use workflows from `vindicta-platform/.agent/workflows/`:
-
-| Workflow | Primary User | Purpose |
-|----------|--------------|--------|
-| `/daily-standup` | Delivery Lead | Daily progress review |
-| `/pr-review` | Delivery Lead | PR review and merge |
-| `/sprint-planning` | Product Owner | Create sprint issues |
-| `/roadmap-update` | Product Owner | Sync ROADMAPs with progress |
-| `/weekly-report` | Both | Weekly metrics report |
-| `/release-management` | Both | Milestone releases |
-
-## Getting Started
-
-Agents are invoked by referencing their AGENT.md file and providing context.
+All agents follow `.specify/memory/constitution.md` which defines:
+- Role boundaries
+- Escalation matrix
+- MCP-First tooling policy
+- Success metrics
+- Forbidden actions
 
 ---
 
