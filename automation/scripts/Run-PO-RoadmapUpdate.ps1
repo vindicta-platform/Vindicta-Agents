@@ -20,7 +20,7 @@ $today = Get-Date -Format "yyyy-MM-dd"
 try {
     # Get issues closed today
     Log "Fetching issues closed today..."
-    $closed = gh api -X GET "/search/issues" -f q="org:vindicta-platform is:closed is:issue closed:>=$today" --jq '.items[] | "\(.repository_url | split("/") | .[-1]): \(.title)"' 2>&1
+    $closed = gh api "/search/issues?q=org:vindicta-platform+is:closed+is:issue+closed:>=$today" --jq '.items[].title' 2>&1
     
     if ($closed) {
         Log "Closed today:"

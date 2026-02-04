@@ -18,7 +18,7 @@ Log "=== ADL PR Review Started ==="
 try {
     # Get open PRs across organization
     Log "Searching open PRs..."
-    $prs = gh pr list --state open --json number,title,repository,createdAt,author --limit 50 2>&1
+    $prs = gh pr list --state open --json number,title,createdAt,author,url --limit 50 2>&1
     
     if ($LASTEXITCODE -eq 0) {
         $prList = $prs | ConvertFrom-Json
