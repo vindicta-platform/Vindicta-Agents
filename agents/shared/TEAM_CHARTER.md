@@ -12,12 +12,18 @@
 │           Final authority on strategy, budget, direction         │
 └───────────────────────────────┬─────────────────────────────────┘
                                 │
-        ┌───────────────────────┼───────────────────────┐
-        ▼                       ▼                       ▼
+                                ▼
+                    ┌───────────────────────┐
+                    │   SENIOR MANAGER      │
+                    │   (Orchestration)     │
+                    └──────────┬────────────┘
+                               │
+        ┌──────────────────────┼──────────────────────┐
+        ▼                      ▼                      ▼
 ┌───────────────┐     ┌─────────────────┐     ┌──────────────────┐
 │   ARCHITECT   │     │ PRODUCT OWNER   │     │ DELIVERY LEAD    │
 │   (Tech)      │     │ (What)          │     │ (How)            │
-└───────┬───────┘     └────────────────-┘     └────────┬─────────┘
+└───────┬───────┘     └─────────────────┘     └────────┬─────────┘
         │                                              │
         │                                              │
         ▼                                              │
@@ -42,15 +48,17 @@
 
 | Agent | Knows About | Escalates To | Receives From |
 |-------|-------------|--------------|---------------|
-| Architect | All agents | Human | Technical questions |
-| Product Owner | ADL, Architect | Human | Priority questions |
-| Delivery Lead | All agents | PO, Human | Sprint blockers |
+| Senior Manager | All agents | Human | Platform health, cross-team coordination |
+| Architect | All agents | SM, Human | Technical questions |
+| Product Owner | ADL, Architect | SM, Human | Priority questions |
+| Delivery Lead | All agents | SM, PO | Sprint blockers |
 | SSE | Architect, ADL, Devs | Architect | Code reviews |
 | Senior Dev | SSE, Junior Dev | SSE | Implementation work |
 | Junior Dev | Senior Dev, SSE | Senior Dev | Bug fixes, tasks |
 
 ### Collaboration Patterns
 
+**SM orchestrates**: ADL + PO workflows (check-in, start-work, end-day)  
 **ADL ↔ PO**: Daily async sync (standup + roadmap)  
 **SSE ↔ Architect**: Architecture reviews  
 **SSE ↔ Senior Dev**: Code reviews, guidance  
@@ -62,6 +70,9 @@
 
 | Agent | Primary Workflow | Trigger |
 |-------|------------------|---------|
+| Senior Manager | `/sm-check-in` | Daily 8:30 AM |
+| Senior Manager | `/sm-start-work` | Work initialization |
+| Senior Manager | `/sm-end-day` | Daily 6:00 PM |
 | Architect | `/arch-review` | Major changes |
 | Product Owner | `/po-sprint-planning` | Monday AM |
 | Delivery Lead | `/adl-standup` | Daily AM |
@@ -87,6 +98,7 @@
 
 | Need | Ask |
 |------|-----|
+| "What's the platform status?" | Senior Manager |
 | "Is this the right approach?" | Architect |
 | "What's the priority?" | Product Owner |
 | "When can this ship?" | Delivery Lead |
@@ -96,4 +108,4 @@
 
 ---
 
-*Team Charter v2.0 — Updated 2026-02-04*
+*Team Charter v2.1 — Updated 2026-02-05*

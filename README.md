@@ -14,12 +14,17 @@
 ├── adl-weekly-report.md  # Friday velocity report
 ├── po-sprint-planning.md # Monday sprint planning
 ├── po-roadmap-update.md  # Daily roadmap sync
-└── po-release-management.md # Milestone releases
+├── po-release-management.md # Milestone releases
+├── sm-check-in.md        # Daily check-in (8:30 AM)
+├── sm-start-work.md      # Work initialization
+└── sm-end-day.md         # End-of-day status (6:00 PM)
 
 agents/
 ├── agile-delivery-lead/
 │   └── AGENT.md          # Role identity only
-└── product-owner/
+├── product-owner/
+│   └── AGENT.md          # Role identity only
+└── senior-manager/
     └── AGENT.md          # Role identity only
 ```
 
@@ -27,6 +32,7 @@ agents/
 
 | Agent | Role | Workflows |
 |-------|------|-----------|
+| **Senior Manager** | Orchestration & Health | `/sm-check-in`, `/sm-start-work`, `/sm-end-day` |
 | **Agile Delivery Lead** | Execution & Process | `/adl-standup`, `/adl-pr-review`, `/adl-weekly-report` |
 | **Product Owner** | Vision & Priority | `/po-sprint-planning`, `/po-roadmap-update`, `/po-release-management` |
 
@@ -35,6 +41,9 @@ agents/
 Workflows are Antigravity-compatible. Invoke with slash commands:
 
 ```
+/sm-check-in      # Execute morning check-in (orchestrates sub-agents)
+/sm-start-work    # Trigger implementation phase
+/sm-end-day       # Execute end-of-day status
 /adl-standup      # Execute morning standup
 /adl-pr-review    # Execute PR review sweep
 /po-sprint-planning  # Execute Monday planning
