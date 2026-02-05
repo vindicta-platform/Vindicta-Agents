@@ -27,10 +27,20 @@ Execute daily at 9:00 AM by Agile Delivery Lead agent.
    body: "⚠️ **Blocker Identified**\n\n[Description]\n\nTime: [timestamp]"
    ```
 
-5. Output standup summary:
+5. Sync with GitHub Projects:
+   - **Project #3** (PR Review Board): Ensure open PRs are tracked
+   - **Project #4** (Platform Roadmap): Update issue statuses
+   ```
+   mcp_github-mcp-server_issue_write
+   method: "update"
+   labels: ["status:in-progress"] or ["status:done"]
+   ```
+
+6. Output standup summary:
    - ✅ Completed yesterday
    - 🎯 Focus today
    - 🚨 Blockers (with age)
+   - 📋 Project board sync status
 
 ## Blocker Thresholds
 
