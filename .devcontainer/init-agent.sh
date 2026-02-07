@@ -1,12 +1,29 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# --- Resolve token: accept GITHUB_TOKEN or AGENT_GITHUB_TOKEN, but not both ---
+
+if [ -n "${GITHUB_TOKEN:-}" ] && [ -n "${AGENT_GITHUB_TOKEN:-}" ]; then
+  echo "❌ ERROR: Both GITHUB_TOKEN and AGENT_GITHUB_TOKEN are set."
+  echo "  Provide only one. GITHUB_TOKEN is used by convention inside the container."
+  echo "  AGENT_GITHUB_TOKEN is the host-side name mapped by devcontainer.json."
+  exit 1
+fi
+
+# Normalize to GITHUB_TOKEN
+if [ -z "${GITHUB_TOKEN:-}" ] && [ -n "${AGENT_GITHUB_TOKEN:-}" ]; then
+  GITHUB_TOKEN="$AGENT_GITHUB_TOKEN"
+fi
+
+# --- Volume detection ---
+
 OUTPUT_DIR="/output"
 HAS_VOLUME=false
-if mountpoint -q "$OUTPUT_DIR" 2>/dev/null || [ -d "$OUTPUT_DIR" ] && [ "$(ls -A $OUTPUT_DIR 2>/dev/null)" ] || mount | grep -q "$OUTPUT_DIR" 2>/dev/null; then
-  # Better check: try writing a test file
-  if touch "$OUTPUT_DIR/.volume-test" 2>/dev/null; then
-    rm -f "$OUTPUT_DIR/.volume-test"
+mkdir -p "$OUTPUT_DIR" 2>/dev/null || true
+if touch "$OUTPUT_DIR/.volume-test" 2>/dev/null; then
+  rm -f "$OUTPUT_DIR/.volume-test"
+  # Check if it's a real mount, not just the container's ephemeral fs
+  if mount | grep -q "$OUTPUT_DIR" 2>/dev/null; then
     HAS_VOLUME=true
   fi
 fi
@@ -57,7 +74,7 @@ if [ -n "${GITHUB_TOKEN:-}" ]; then
   echo "  👤 Authenticated as: $USER_LOGIN"
   echo ""
 else
-  echo "[PAT] No GITHUB_TOKEN provided. GitHub features disabled."
+  echo "[PAT] No token provided (GITHUB_TOKEN or AGENT_GITHUB_TOKEN). GitHub features disabled."
   echo ""
 fi
 
@@ -175,7 +192,7 @@ EOF
       echo "    - Classic PAT:       add 'admin:gpg_key' scope"
       echo "    - Fine-Grained PAT:  add 'gpg_keys: write' permission"
     else
-      echo "  No GITHUB_TOKEN was provided."
+      echo "  No token was provided."
     fi
     echo ""
     echo "  For now, add the key manually:"
