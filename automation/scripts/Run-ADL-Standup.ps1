@@ -6,11 +6,12 @@
 #>
 
 $ErrorActionPreference = "Stop"
-$AgentRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $LogPath = Join-Path $PSScriptRoot "..\logs"
 $LogFile = Join-Path $LogPath "adl-standup-$(Get-Date -Format 'yyyy-MM-dd').log"
 
-# Ensure log directory
+# Import Logic Module
+Import-Module "$PSScriptRoot\..\modules\VindictaAgents.Automation.psm1" -Force
+
 if (-not (Test-Path $LogPath)) { New-Item -ItemType Directory -Path $LogPath -Force | Out-Null }
 
 function Log { param([string]$Msg); "$(Get-Date -Format 'HH:mm:ss') $Msg" | Tee-Object -FilePath $LogFile -Append }
@@ -18,34 +19,46 @@ function Log { param([string]$Msg); "$(Get-Date -Format 'HH:mm:ss') $Msg" | Tee-
 Log "=== ADL Standup Started ==="
 
 # Calculate week number
-$startDate = [DateTime]"2026-02-04"
-$weekNum = [math]::Ceiling((((Get-Date) - $startDate).Days + 1) / 7)
+$weekNum = Get-VindictaWeek
 Log "Week $weekNum of 6"
 
-# Execute via GitHub CLI (MCP operations)
 try {
     Log "Fetching open issues..."
-    $issues = gh api -X GET "/search/issues" -f q="org:vindicta-platform is:open is:issue" --jq '.total_count' 2>&1
+    $issues = Get-GitHubIssues -Query "org:vindicta-platform is:open is:issue"
     Log "Open issues: $issues"
 
     Log "Fetching open PRs..."
-    $prs = gh api -X GET "/search/issues" -f q="org:vindicta-platform is:open is:pr" --jq '.total_count' 2>&1
+    $prs = Get-GitHubIssues -Query "org:vindicta-platform is:open is:pr"
     Log "Open PRs: $prs"
 
     Log "Fetching blocked issues..."
-    $blocked = gh api -X GET "/search/issues" -f q="org:vindicta-platform is:open label:blocked" --jq '.total_count' 2>&1
+    $blocked = Get-GitHubIssues -Query "org:vindicta-platform is:open label:blocked"
     Log "Blocked: $blocked"
 
     # Summary
-    $summary = @"
-
-# Daily Standup - $(Get-Date -Format 'dddd, MMMM dd')
-Week $weekNum | Open Issues: $issues | Open PRs: $prs | Blocked: $blocked
+    $statusSummary = @"
+- **Week**: $weekNum
+- **Open Issues**: $issues
+- **Open PRs**: $prs
+- **Blocked**: $blocked
 "@
-    Log $summary
+    Log ""
+    Log "# Daily Standup - $(Get-Date -Format 'dddd, MMMM dd')"
+    Log ($statusSummary -replace "- \*\*", "| " -replace "\*\*:", "" -replace "`n", " ")
+
+    # Update Report
+    Log "Updating local agent report..."
+    Update-AgentReport -AgentName "ADL" -Status $statusSummary -ActivityEntry "Standup completed. Week $weekNum. Open: $issues, Blocked: $blocked."
+
+    # GitHub Sync
+    Log "Syncing status to GitHub..."
+    $ghSyncSuccess = Sync-GitHubEntity -Query "org:vindicta-platform label:tracking label:adl-agent is:open" -CommentBody "## ADL Standup $(Get-Date -Format 'yyyy-MM-dd')`n$statusSummary"
+    if ($ghSyncSuccess) { Log "GitHub sync successful." } else { Log "GitHub sync skipped." }
+
 }
 catch {
     Log "ERROR: $($_.Exception.Message)"
+    Update-AgentReport -AgentName "ADL" -Status "ERROR" -ActivityEntry "Standup FAILED: $($_.Exception.Message)"
 }
 
 Log "=== ADL Standup Complete ==="
