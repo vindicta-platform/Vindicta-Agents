@@ -14,3 +14,7 @@ RUN mkdir -p /home/vscode/.gnupg && \
     echo "no-tty" > /home/vscode/.gnupg/gpg.conf && \
     chmod 700 /home/vscode/.gnupg && \
     chown -R vscode:vscode /home/vscode/.gnupg
+
+# Copy init script into the image
+COPY init-agent.sh /usr/local/bin/init-agent.sh
+RUN chmod +x /usr/local/bin/init-agent.sh

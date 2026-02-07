@@ -14,6 +14,6 @@
     "GITHUB_TOKEN": "${localEnv:AGENT_GITHUB_TOKEN}",
     "GPG_PRIVATE_KEY": "${localEnv:GPG_PRIVATE_KEY}"
   },
-  "postCreateCommand": "bash .devcontainer/init-agent.sh",
+  "postCreateCommand": "init-agent.sh",
   "remoteUser": "vscode"
 }
