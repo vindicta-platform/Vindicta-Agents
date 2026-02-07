@@ -15,25 +15,46 @@ This repo contains:
 
 ### Quick Start
 
-1. **Copy the environment template:**
+1. **Clone and checkout the branch:**
+   ```bash
+   git clone https://github.com/vindicta-platform/Vindicta-Agents.git
+   cd Vindicta-Agents
+   ```
+
+2. **Copy the environment template:**
    ```bash
    cp .devcontainer/.env.example .devcontainer/.env
    ```
 
-2. **Fill in your secrets** in `.devcontainer/.env`:
+3. **Fill in your secrets** in `.devcontainer/.env`:
    - `AGENT_GITHUB_TOKEN` — Fine-Grained PAT from the `vindicta-bot` account
    - `GPG_PRIVATE_KEY` — Base64-encoded GPG private key (leave blank for auto-generation)
 
-3. **Open in VS Code** with the Dev Containers extension, or build manually:
-   ```bash
-   docker build -t vindicta-agent .devcontainer/
-   docker run --rm --env-file .devcontainer/.env -it vindicta-agent bash
+4. **Build and run:**
+
+   **VS Code:** Open in Dev Containers extension (auto-builds and runs `init-agent.sh`).
+
+   **Docker CLI (PowerShell on Windows):**
+   ```powershell
+   docker build --no-cache -t vindicta-agent .devcontainer/
+   docker run --rm -e AGENT_NAME=vindicta-bot -e "AGENT_EMAIL=260104759+vindicta-bot@users.noreply.github.com" -it vindicta-agent init-agent.sh
    ```
 
-4. **On first run** (no GPG key), the init script will:
+   **Docker CLI (bash/macOS/Linux):**
+   ```bash
+   docker build --no-cache -t vindicta-agent .devcontainer/
+   docker run --rm \
+     -e AGENT_NAME=vindicta-bot \
+     -e AGENT_EMAIL=260104759+vindicta-bot@users.noreply.github.com \
+     -it vindicta-agent init-agent.sh
+   ```
+
+5. **On first run** (no GPG key), the init script will:
    - Generate a 4096-bit RSA GPG key for `vindicta-bot`
    - Print the public key — **add this to the bot's GitHub account**
    - Print the base64 export command — **save this to `.env` for future containers**
+
+> **Note:** The Dockerfile includes `dos2unix` to handle Windows CRLF line endings automatically. No manual conversion needed.
 
 ### What the Container Does
 
@@ -53,12 +74,14 @@ This repo contains:
 
 ## Branch Protections
 
-All `vindicta-platform` repos have branch protections on `main`:
+All `vindicta-platform` **public** repos have branch protections on `main`:
 
 - **1 approving review** required before merge
 - **Stale reviews dismissed** on new pushes
 - **Admin bypass enabled** — org admins can merge without review
 - **Force pushes and branch deletion blocked**
+
+> **Note:** Private repos (`Vindicta-Agents`, `.agent`, `.specify`) require GitHub Team plan for branch protections.
 
 To re-apply protections across all repos:
 ```bash
