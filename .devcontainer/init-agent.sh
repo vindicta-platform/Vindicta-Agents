@@ -5,50 +5,113 @@ OUTPUT_DIR="/output"
 mkdir -p "$OUTPUT_DIR"
 
 echo "=== Initializing Vindicta Agent Identity ==="
+echo ""
+
+# --- PAT Access Check ---
+
+GPG_READ=false
+GPG_WRITE=false
+
+if [ -n "${GITHUB_TOKEN:-}" ]; then
+  echo "[PAT] Checking GitHub token permissions..."
+
+  # Test GPG read access
+  GPG_READ_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
+    -H "Authorization: Bearer $GITHUB_TOKEN" \
+    -H "Accept: application/vnd.github+json" \
+    "https://api.github.com/user/gpg_keys")
+
+  if [ "$GPG_READ_RESPONSE" = "200" ]; then
+    GPG_READ=true
+    echo "  ✅ GPG keys: READ access"
+  else
+    echo "  ❌ GPG keys: no read access (HTTP $GPG_READ_RESPONSE)"
+  fi
+
+  # Test GPG write access by sending a dry-run POST with an invalid key
+  # A 422 (validation error) means we have write access but the key was invalid
+  # A 404/403 means we don't have write access
+  GPG_WRITE_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
+    -X POST "https://api.github.com/user/gpg_keys" \
+    -H "Authorization: Bearer $GITHUB_TOKEN" \
+    -H "Accept: application/vnd.github+json" \
+    -d '{"armored_public_key": "test"}')
+
+  if [ "$GPG_WRITE_RESPONSE" = "422" ]; then
+    GPG_WRITE=true
+    echo "  ✅ GPG keys: WRITE access"
+  elif [ "$GPG_WRITE_RESPONSE" = "201" ]; then
+    GPG_WRITE=true
+    echo "  ✅ GPG keys: WRITE access"
+  else
+    echo "  ❌ GPG keys: no write access (HTTP $GPG_WRITE_RESPONSE)"
+  fi
+
+  # Check basic user info
+  USER_LOGIN=$(curl -s \
+    -H "Authorization: Bearer $GITHUB_TOKEN" \
+    -H "Accept: application/vnd.github+json" \
+    "https://api.github.com/user" | jq -r '.login // "unknown"')
+  echo "  👤 Authenticated as: $USER_LOGIN"
+  echo ""
+else
+  echo "[PAT] No GITHUB_TOKEN provided. GitHub features disabled."
+  echo ""
+fi
 
 # --- GPG Key Setup ---
 
 if [ -n "${GPG_PRIVATE_KEY:-}" ]; then
   # === IMPORT EXISTING KEY ===
-  echo "Importing provided GPG key..."
-  echo "$GPG_PRIVATE_KEY" | base64 -d | gpg --batch --import
+  echo "[GPG] Importing provided GPG key..."
+  echo "$GPG_PRIVATE_KEY" | base64 -d | gpg --batch --import 2>/dev/null
   GPG_KEY_ID=$(gpg --list-secret-keys --keyid-format=long 2>/dev/null | grep sec | head -1 | awk '{print $2}' | cut -d'/' -f2)
 
   # Trust the key ultimately
-  echo "${GPG_KEY_ID}:6:" | gpg --import-ownertrust
-  echo "GPG key imported: $GPG_KEY_ID"
+  echo "${GPG_KEY_ID}:6:" | gpg --import-ownertrust 2>/dev/null
+  echo "  Key imported: $GPG_KEY_ID"
 
   # Validate the key exists on GitHub (read-only check)
-  if [ -n "${GITHUB_TOKEN:-}" ]; then
-    echo "Validating GPG key on GitHub..."
-    EXISTING_KEYS=$(curl -s -o /dev/null -w "%{http_code}" \
+  if [ "$GPG_READ" = true ]; then
+    echo "[GPG] Validating key is registered on GitHub..."
+    FOUND=$(curl -s \
       -H "Authorization: Bearer $GITHUB_TOKEN" \
       -H "Accept: application/vnd.github+json" \
-      "https://api.github.com/user/gpg_keys")
+      "https://api.github.com/user/gpg_keys" | \
+      grep -c "${GPG_KEY_ID}" 2>/dev/null || true)
 
-    if [ "$EXISTING_KEYS" = "200" ]; then
-      # Check if our key fingerprint is registered
-      KEY_FINGERPRINT=$(gpg --fingerprint "$GPG_KEY_ID" 2>/dev/null | grep -oP '[A-F0-9]{40}' | head -1)
-      FOUND=$(curl -s \
-        -H "Authorization: Bearer $GITHUB_TOKEN" \
-        -H "Accept: application/vnd.github+json" \
-        "https://api.github.com/user/gpg_keys" | \
-        grep -c "${GPG_KEY_ID}" 2>/dev/null || true)
-
-      if [ "${FOUND:-0}" -gt 0 ]; then
-        echo "  ✅ GPG key is registered on GitHub"
-      else
-        echo "  ⚠️  GPG key NOT found on GitHub — you may need to add it manually"
-        echo "     Export: cat $OUTPUT_DIR/${AGENT_NAME:-vindicta-bot}-gpg-public.asc"
-      fi
+    if [ "${FOUND:-0}" -gt 0 ]; then
+      echo "  ✅ Key is registered on GitHub"
     else
-      echo "  ⚠️  Could not validate GPG keys on GitHub (HTTP $EXISTING_KEYS)"
+      echo "  ⚠️  Key NOT found on GitHub"
+      if [ "$GPG_WRITE" = true ]; then
+        echo "  Uploading key to GitHub..."
+        ARMORED_KEY=$(gpg --armor --export "$GPG_KEY_ID")
+        UPLOAD_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+          -X POST "https://api.github.com/user/gpg_keys" \
+          -H "Authorization: Bearer $GITHUB_TOKEN" \
+          -H "Accept: application/vnd.github+json" \
+          -d "$(jq -n --arg key "$ARMORED_KEY" '{armored_public_key: $key}')")
+        if [ "$UPLOAD_CODE" = "201" ] || [ "$UPLOAD_CODE" = "422" ]; then
+          echo "  ✅ Key uploaded to GitHub"
+        else
+          echo "  ❌ Upload failed (HTTP $UPLOAD_CODE)"
+          echo "  Add manually: https://github.com/settings/keys"
+        fi
+      else
+        echo "  ℹ️  PAT lacks write access. Add the key manually:"
+        echo "     1. Copy: $OUTPUT_DIR/${AGENT_NAME:-vindicta-bot}-gpg-public.asc"
+        echo "     2. Paste at: https://github.com/settings/keys"
+        echo ""
+        echo "  To enable auto-upload on next run, add 'admin:gpg_key' scope (classic PAT)"
+        echo "  or 'gpg_keys: write' permission (fine-grained PAT)."
+      fi
     fi
   fi
 
 else
   # === GENERATE NEW KEY ===
-  echo "No GPG_PRIVATE_KEY provided. Generating a new key..."
+  echo "[GPG] No GPG_PRIVATE_KEY provided. Generating a new key..."
   cat > /tmp/gpg-key-params <<EOF
 %no-protection
 Key-Type: RSA
@@ -60,57 +123,63 @@ Name-Email: ${AGENT_EMAIL:-260104759+vindicta-bot@users.noreply.github.com}
 Expire-Date: 1y
 %commit
 EOF
-  gpg --batch --gen-key /tmp/gpg-key-params
+  gpg --batch --gen-key /tmp/gpg-key-params 2>/dev/null
   rm /tmp/gpg-key-params
   GPG_KEY_ID=$(gpg --list-secret-keys --keyid-format=long 2>/dev/null | grep sec | head -1 | awk '{print $2}' | cut -d'/' -f2)
-  echo "New GPG key generated: $GPG_KEY_ID"
+  echo "  New key generated: $GPG_KEY_ID"
 
-  # Try to auto-upload the key to GitHub
-  UPLOADED=false
-  if [ -n "${GITHUB_TOKEN:-}" ]; then
-    echo "Attempting to upload GPG key to GitHub..."
+  # Try to auto-upload
+  if [ "$GPG_WRITE" = true ]; then
+    echo "[GPG] Uploading key to GitHub..."
     ARMORED_KEY=$(gpg --armor --export "$GPG_KEY_ID")
-    UPLOAD_RESPONSE=$(curl -s -w "\n%{http_code}" \
-      -X POST https://api.github.com/user/gpg_keys \
+    UPLOAD_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+      -X POST "https://api.github.com/user/gpg_keys" \
       -H "Authorization: Bearer $GITHUB_TOKEN" \
       -H "Accept: application/vnd.github+json" \
       -d "$(jq -n --arg key "$ARMORED_KEY" '{armored_public_key: $key}')")
 
-    HTTP_CODE=$(echo "$UPLOAD_RESPONSE" | tail -1)
-    RESPONSE_BODY=$(echo "$UPLOAD_RESPONSE" | sed '$d')
-
-    if [ "$HTTP_CODE" = "201" ]; then
-      echo "  ✅ GPG key uploaded to GitHub automatically"
-      UPLOADED=true
-    elif [ "$HTTP_CODE" = "422" ]; then
-      echo "  ✅ GPG key already exists on GitHub"
-      UPLOADED=true
-    elif [ "$HTTP_CODE" = "404" ] || [ "$HTTP_CODE" = "403" ]; then
-      echo "  ⚠️  PAT does not have gpg_keys write permission (HTTP $HTTP_CODE)"
-      echo "     Falling back to file export."
+    if [ "$UPLOAD_CODE" = "201" ]; then
+      echo "  ✅ Key uploaded to GitHub automatically"
+    elif [ "$UPLOAD_CODE" = "422" ]; then
+      echo "  ✅ Key already exists on GitHub"
     else
-      echo "  ⚠️  Upload failed (HTTP $HTTP_CODE)"
-      echo "     Falling back to file export."
+      echo "  ❌ Upload failed (HTTP $UPLOAD_CODE). Add manually."
     fi
-  fi
-
-  if [ "$UPLOADED" = false ]; then
+  else
     echo ""
-    echo "=== MANUAL STEP REQUIRED ==="
-    echo "Add this public key to the bot's GitHub account: https://github.com/settings/keys"
-    echo "The key has been exported to: $OUTPUT_DIR/${AGENT_NAME:-vindicta-bot}-gpg-public.asc"
+    echo "  ========================================"
+    echo "  MANUAL STEP REQUIRED"
+    echo "  ========================================"
+    echo "  The key could not be uploaded automatically."
+    if [ -n "${GITHUB_TOKEN:-}" ]; then
+      echo "  Your PAT does not have GPG write permission."
+      echo ""
+      echo "  To fix for next run, update your PAT with:"
+      echo "    - Classic PAT:       add 'admin:gpg_key' scope"
+      echo "    - Fine-Grained PAT:  add 'gpg_keys: write' permission"
+    else
+      echo "  No GITHUB_TOKEN was provided."
+    fi
+    echo ""
+    echo "  For now, add the key manually:"
+    echo "    1. Copy:  $OUTPUT_DIR/${AGENT_NAME:-vindicta-bot}-gpg-public.asc"
+    echo "    2. Go to: https://github.com/settings/keys"
+    echo "    3. Click 'New GPG key' and paste the contents"
+    echo "  ========================================"
   fi
 fi
 
 # --- Export keys to host volume ---
 
+echo ""
+echo "[Export] Writing keys to $OUTPUT_DIR/"
 PUBKEY_FILE="$OUTPUT_DIR/${AGENT_NAME:-vindicta-bot}-gpg-public.asc"
 gpg --armor --export "$GPG_KEY_ID" > "$PUBKEY_FILE"
-echo "Public key exported to: $PUBKEY_FILE"
+echo "  Public key:  $PUBKEY_FILE"
 
 PRIVKEY_FILE="$OUTPUT_DIR/${AGENT_NAME:-vindicta-bot}-gpg-private-b64.txt"
 gpg --armor --export-secret-keys "$GPG_KEY_ID" | base64 -w0 > "$PRIVKEY_FILE"
-echo "Private key (base64) exported to: $PRIVKEY_FILE"
+echo "  Private key: $PRIVKEY_FILE"
 
 # --- Configure git identity ---
 
@@ -124,19 +193,20 @@ git config --global gpg.program gpg
 # --- Configure GitHub CLI auth ---
 
 if [ -n "${GITHUB_TOKEN:-}" ]; then
-  echo "$GITHUB_TOKEN" | gh auth login --with-token
-  echo "GitHub CLI authenticated."
+  echo "$GITHUB_TOKEN" | gh auth login --with-token 2>/dev/null
+  echo "[GH CLI] Authenticated."
 fi
 
 echo ""
 echo "=== Agent Identity Ready ==="
-echo "  Name:      $(git config user.name)"
-echo "  Email:     $(git config user.email)"
-echo "  GPG:       $GPG_KEY_ID"
+echo "  Name:    $(git config user.name)"
+echo "  Email:   $(git config user.email)"
+echo "  GPG:     $GPG_KEY_ID"
 echo "  PubKey:  $PUBKEY_FILE"
 echo "  PrivKey: $PRIVKEY_FILE"
-echo "  PubKey:  $PUBKEY_FILE"
-echo "  PrivKey: $PRIVKEY_FILE"
-echo ""
-echo "Add the public key to the bot's GitHub account:"
-echo "  https://github.com/settings/keys"
+if [ "$GPG_READ" = true ]; then
+  echo "  GitHub:  GPG read ✅"
+fi
+if [ "$GPG_WRITE" = true ]; then
+  echo "  GitHub:  GPG write ✅"
+fi
