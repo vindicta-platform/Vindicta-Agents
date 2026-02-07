@@ -2,7 +2,14 @@
 set -euo pipefail
 
 OUTPUT_DIR="/output"
-mkdir -p "$OUTPUT_DIR"
+HAS_VOLUME=false
+if mountpoint -q "$OUTPUT_DIR" 2>/dev/null || [ -d "$OUTPUT_DIR" ] && [ "$(ls -A $OUTPUT_DIR 2>/dev/null)" ] || mount | grep -q "$OUTPUT_DIR" 2>/dev/null; then
+  # Better check: try writing a test file
+  if touch "$OUTPUT_DIR/.volume-test" 2>/dev/null; then
+    rm -f "$OUTPUT_DIR/.volume-test"
+    HAS_VOLUME=true
+  fi
+fi
 
 echo "=== Initializing Vindicta Agent Identity ==="
 echo ""
@@ -28,26 +35,21 @@ if [ -n "${GITHUB_TOKEN:-}" ]; then
     echo "  ❌ GPG keys: no read access (HTTP $GPG_READ_RESPONSE)"
   fi
 
-  # Test GPG write access by sending a dry-run POST with an invalid key
-  # A 422 (validation error) means we have write access but the key was invalid
-  # A 404/403 means we don't have write access
+  # Test GPG write access with an invalid key (422 = has write, 404/403 = no write)
   GPG_WRITE_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
     -X POST "https://api.github.com/user/gpg_keys" \
     -H "Authorization: Bearer $GITHUB_TOKEN" \
     -H "Accept: application/vnd.github+json" \
     -d '{"armored_public_key": "test"}')
 
-  if [ "$GPG_WRITE_RESPONSE" = "422" ]; then
-    GPG_WRITE=true
-    echo "  ✅ GPG keys: WRITE access"
-  elif [ "$GPG_WRITE_RESPONSE" = "201" ]; then
+  if [ "$GPG_WRITE_RESPONSE" = "422" ] || [ "$GPG_WRITE_RESPONSE" = "201" ]; then
     GPG_WRITE=true
     echo "  ✅ GPG keys: WRITE access"
   else
     echo "  ❌ GPG keys: no write access (HTTP $GPG_WRITE_RESPONSE)"
   fi
 
-  # Check basic user info
+  # Check authenticated user
   USER_LOGIN=$(curl -s \
     -H "Authorization: Bearer $GITHUB_TOKEN" \
     -H "Accept: application/vnd.github+json" \
@@ -57,6 +59,25 @@ if [ -n "${GITHUB_TOKEN:-}" ]; then
 else
   echo "[PAT] No GITHUB_TOKEN provided. GitHub features disabled."
   echo ""
+fi
+
+# --- Pre-flight warnings ---
+
+if [ "$HAS_VOLUME" = false ] && [ "$GPG_WRITE" = false ]; then
+  echo "  ⚠️⚠️⚠️  WARNING ⚠️⚠️⚠️"
+  echo "  No /output volume mounted AND no GPG write access."
+  echo "  Generated keys will be LOST when this container exits!"
+  echo ""
+  echo "  Fix by doing ONE of the following:"
+  echo "    1. Mount a volume:  -v \"\${PWD}/.keys:/output\""
+  echo "    2. Add GPG write to PAT:  'admin:gpg_key' (classic) or 'gpg_keys: write' (fine-grained)"
+  echo ""
+  read -p "  Continue anyway? (y/N) " -n 1 -r
+  echo ""
+  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    echo "  Aborted."
+    exit 1
+  fi
 fi
 
 # --- GPG Key Setup ---
@@ -96,15 +117,12 @@ if [ -n "${GPG_PRIVATE_KEY:-}" ]; then
           echo "  ✅ Key uploaded to GitHub"
         else
           echo "  ❌ Upload failed (HTTP $UPLOAD_CODE)"
-          echo "  Add manually: https://github.com/settings/keys"
         fi
       else
         echo "  ℹ️  PAT lacks write access. Add the key manually:"
         echo "     1. Copy: $OUTPUT_DIR/${AGENT_NAME:-vindicta-bot}-gpg-public.asc"
         echo "     2. Paste at: https://github.com/settings/keys"
-        echo ""
-        echo "  To enable auto-upload on next run, add 'admin:gpg_key' scope (classic PAT)"
-        echo "  or 'gpg_keys: write' permission (fine-grained PAT)."
+        echo "     To fix: add 'admin:gpg_key' (classic) or 'gpg_keys: write' (fine-grained)"
       fi
     fi
   fi
@@ -153,7 +171,6 @@ EOF
     echo "  The key could not be uploaded automatically."
     if [ -n "${GITHUB_TOKEN:-}" ]; then
       echo "  Your PAT does not have GPG write permission."
-      echo ""
       echo "  To fix for next run, update your PAT with:"
       echo "    - Classic PAT:       add 'admin:gpg_key' scope"
       echo "    - Fine-Grained PAT:  add 'gpg_keys: write' permission"
@@ -169,17 +186,30 @@ EOF
   fi
 fi
 
-# --- Export keys to host volume ---
+# --- Export keys to host volume (if mounted) ---
 
-echo ""
-echo "[Export] Writing keys to $OUTPUT_DIR/"
-PUBKEY_FILE="$OUTPUT_DIR/${AGENT_NAME:-vindicta-bot}-gpg-public.asc"
-gpg --armor --export "$GPG_KEY_ID" > "$PUBKEY_FILE"
-echo "  Public key:  $PUBKEY_FILE"
+if [ "$HAS_VOLUME" = true ]; then
+  echo ""
+  echo "[Export] Writing keys to $OUTPUT_DIR/"
+  PUBKEY_FILE="$OUTPUT_DIR/${AGENT_NAME:-vindicta-bot}-gpg-public.asc"
+  gpg --armor --export "$GPG_KEY_ID" > "$PUBKEY_FILE"
+  echo "  Public key:  $PUBKEY_FILE"
 
-PRIVKEY_FILE="$OUTPUT_DIR/${AGENT_NAME:-vindicta-bot}-gpg-private-b64.txt"
-gpg --armor --export-secret-keys "$GPG_KEY_ID" | base64 -w0 > "$PRIVKEY_FILE"
-echo "  Private key: $PRIVKEY_FILE"
+  PRIVKEY_FILE="$OUTPUT_DIR/${AGENT_NAME:-vindicta-bot}-gpg-private-b64.txt"
+  gpg --armor --export-secret-keys "$GPG_KEY_ID" | base64 -w0 > "$PRIVKEY_FILE"
+  echo "  Private key: $PRIVKEY_FILE"
+else
+  if [ "$GPG_WRITE" = true ]; then
+    echo ""
+    echo "[Export] No /output volume mounted — skipping file export."
+    echo "  (Key was uploaded to GitHub, so no file export needed.)"
+  else
+    echo ""
+    echo "  ⚠️  No /output volume mounted. Keys only exist inside this container."
+    echo "     They will be LOST when the container exits."
+    echo "     To persist, re-run with: -v \"\${PWD}/.keys:/output\""
+  fi
+fi
 
 # --- Configure git identity ---
 
@@ -202,11 +232,5 @@ echo "=== Agent Identity Ready ==="
 echo "  Name:    $(git config user.name)"
 echo "  Email:   $(git config user.email)"
 echo "  GPG:     $GPG_KEY_ID"
-echo "  PubKey:  $PUBKEY_FILE"
-echo "  PrivKey: $PRIVKEY_FILE"
-if [ "$GPG_READ" = true ]; then
-  echo "  GitHub:  GPG read ✅"
-fi
-if [ "$GPG_WRITE" = true ]; then
-  echo "  GitHub:  GPG write ✅"
-fi
+echo "  Volume:  $([ "$HAS_VOLUME" = true ] && echo 'mounted ✅' || echo 'not mounted')"
+echo "  GitHub:  $([ "$GPG_READ" = true ] && echo 'read ✅' || echo 'read ❌') $([ "$GPG_WRITE" = true ] && echo 'write ✅' || echo 'write ❌')"
