@@ -9,6 +9,9 @@ $ErrorActionPreference = "Stop"
 $LogPath = Join-Path $PSScriptRoot "..\logs"
 $LogFile = Join-Path $LogPath "adl-pr-review-$(Get-Date -Format 'yyyy-MM-dd').log"
 
+# Import Logic Module
+Import-Module "$PSScriptRoot\..\modules\VindictaAgents.Automation.psm1" -Force
+
 if (-not (Test-Path $LogPath)) { New-Item -ItemType Directory -Path $LogPath -Force | Out-Null }
 
 function Log { param([string]$Msg); "$(Get-Date -Format 'HH:mm:ss') $Msg" | Tee-Object -FilePath $LogFile -Append }
@@ -17,12 +20,16 @@ Log "=== ADL PR Review Started ==="
 
 try {
     # Get open PRs across organization
-    Log "Searching open PRs..."
-    $prs = gh pr list --state open --json number,title,createdAt,author,url --limit 50 2>&1
+    Log "Searching open PRs (Org-Wide)..."
+    # using gh search for org-wide visibility
+    $prs = gh search prs --state open --owner vindicta-platform --json "number,title,createdAt,author,url" --limit 50 2>&1
+    $count = 0
+    $reviewNeeded = 0
     
-    if ($LASTEXITCODE -eq 0) {
+    if ($LASTEXITCODE -eq 0 -and $prs) {
         $prList = $prs | ConvertFrom-Json
-        Log "Found $($prList.Count) open PRs"
+        $count = $prList.Count
+        Log "Found $count open PRs"
         
         foreach ($pr in $prList) {
             $age = ((Get-Date) - [DateTime]$pr.createdAt).TotalHours
@@ -31,12 +38,20 @@ try {
         }
     }
     
-    # Check for PRs needing Copilot review
+    # Check for PRs without reviews (Simple placeholder logic)
     Log "Checking for PRs without reviews..."
-    # This would integrate with MCP tools in full implementation
+    # In full implementation, we'd query reviewDecision
+    
+    $statusSummary = "PR Sweep Complete. Open: $count."
+    
+    # Update Report (ADL shares report)
+    Log "Updating local agent report..."
+    Update-AgentReport -AgentName "ADL" -Status $statusSummary -ActivityEntry "PR Review completed. Found $count open PRs."
+
 }
 catch {
     Log "ERROR: $($_.Exception.Message)"
+    Update-AgentReport -AgentName "ADL" -Status "ERROR" -ActivityEntry "PR Review FAILED: $($_.Exception.Message)"
 }
 
 Log "=== ADL PR Review Complete ==="
