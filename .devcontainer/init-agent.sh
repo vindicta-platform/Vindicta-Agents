@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+OUTPUT_DIR="/output"
+mkdir -p "$OUTPUT_DIR"
+
 echo "=== Initializing Vindicta Agent Identity ==="
 
 # Import GPG private key from environment
@@ -31,14 +34,17 @@ EOF
 
   echo ""
   echo "=== NEW GPG KEY GENERATED ==="
-  echo "Add this public key to the agent's GitHub account:"
-  echo ""
-  gpg --armor --export "$GPG_KEY_ID"
-  echo ""
-  echo "Export the private key for future containers:"
-  echo "  gpg --armor --export-secret-keys $GPG_KEY_ID | base64 -w0"
-  echo ""
 fi
+
+# Export public key to host-mounted output directory
+PUBKEY_FILE="$OUTPUT_DIR/${AGENT_NAME:-vindicta-bot}-gpg-public.asc"
+gpg --armor --export "$GPG_KEY_ID" > "$PUBKEY_FILE"
+echo "Public key exported to: $PUBKEY_FILE"
+
+# Export private key (base64) for future container re-use
+PRIVKEY_FILE="$OUTPUT_DIR/${AGENT_NAME:-vindicta-bot}-gpg-private-b64.txt"
+gpg --armor --export-secret-keys "$GPG_KEY_ID" | base64 -w0 > "$PRIVKEY_FILE"
+echo "Private key (base64) exported to: $PRIVKEY_FILE"
 
 # Configure git identity
 git config --global user.name "${AGENT_NAME:-vindicta-bot}"
@@ -54,7 +60,13 @@ if [ -n "${GITHUB_TOKEN:-}" ]; then
   echo "GitHub CLI authenticated."
 fi
 
+echo ""
 echo "=== Agent Identity Ready ==="
-echo "  Name:  $(git config user.name)"
-echo "  Email: $(git config user.email)"
-echo "  GPG:   $GPG_KEY_ID"
+echo "  Name:    $(git config user.name)"
+echo "  Email:   $(git config user.email)"
+echo "  GPG:     $GPG_KEY_ID"
+echo "  PubKey:  $PUBKEY_FILE"
+echo "  PrivKey: $PRIVKEY_FILE"
+echo ""
+echo "Add the public key to the bot's GitHub account:"
+echo "  https://github.com/settings/keys"
