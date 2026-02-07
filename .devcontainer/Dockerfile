@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y \
     git \
     curl \
     jq \
+    dos2unix \
     && rm -rf /var/lib/apt/lists/*
 
 # Configure GPG for non-interactive use
@@ -15,6 +16,6 @@ RUN mkdir -p /home/vscode/.gnupg && \
     chmod 700 /home/vscode/.gnupg && \
     chown -R vscode:vscode /home/vscode/.gnupg
 
-# Copy init script into the image
+# Copy init script and fix line endings (Windows CRLF -> Unix LF)
 COPY init-agent.sh /usr/local/bin/init-agent.sh
-RUN chmod +x /usr/local/bin/init-agent.sh
+RUN dos2unix /usr/local/bin/init-agent.sh && chmod +x /usr/local/bin/init-agent.sh
