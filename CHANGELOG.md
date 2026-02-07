@@ -5,6 +5,22 @@ All notable changes to the Vindicta-Agents project will be documented in this fi
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Planned: v0.2.0 — Workspace Isolation & Devcontainer Spike
+- Research multi-repo devcontainer workspace patterns across IDEs
+- Document workspace isolation strategies
+- Update Dockerfile.slim with workspace structure
+
+### Planned: v0.2.1 — Multi-Repo Operations
+- `workspace-status` utility for cross-repo status
+- `workspace-sync` utility with error handling for 7 edge cases
+
+### Planned: v0.2.2 — PR Lifecycle
+- `workspace-finish` for session finalization (commit → push → PR)
+- `workspace-pr` for cross-workspace PR status
+- MCP retry-with-memory fallback pattern
+
 ## [0.1.0] - 2026-02-07
 
 ### Added
@@ -29,4 +45,5 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `vindicta-bot` machine user account created and added to org
 - GitHub Apps noted as future v2 migration path (explicitly out of scope)
 
+[Unreleased]: https://github.com/vindicta-platform/Vindicta-Agents/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/vindicta-platform/Vindicta-Agents/releases/tag/v0.1.0
