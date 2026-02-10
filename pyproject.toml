@@ -1,0 +1,53 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "vindicta-agents"
+version = "0.1.0"
+description = "SDKs, Workflows, and Swarm for the Vindicta Platform"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "vindicta-foundation",
+    "pydantic>=2.0",
+]
+
+[project.optional-dependencies]
+llm = [
+    "ollama",
+]
+dev = [
+    "mypy>=1.0.0",
+    "ruff>=0.1.0",
+    "pytest>=8.0.0",
+    "pytest-cov>=6.0.0",
+    "behave>=1.2.6",
+]
+
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/vindicta_agents"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.uv.sources]
+vindicta-foundation = { path = "../vindicta-foundation", editable = true }
+
+[tool.mypy]
+strict = true
+python_version = "3.12"
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.coverage.run]
+source = ["src/vindicta_agents"]
+omit = ["tests/*", "features/*"]
+
+[tool.coverage.report]
+fail_under = 90
+show_missing = true
+
