@@ -19,6 +19,7 @@ docker build --no-cache -t vindicta-agent .devcontainer/
 ### 2. Run with Agent Identity
 
 **First run (generate GPG key):**
+
 ```powershell
 docker run --rm `
   -v "${PWD}/.keys:/output" `
@@ -31,11 +32,13 @@ docker run --rm `
 ```
 
 Inside the container:
+
 ```bash
 init-agent.sh   # generates key, exports to /output/, uploads to GitHub if PAT allows
 ```
 
 **Subsequent runs (import existing key):**
+
 ```powershell
 $GPG_KEY = Get-Content .keys/vindicta-bot-gpg-private-b64.txt -Raw
 docker run --rm `
@@ -107,9 +110,9 @@ docker stop vindicta-agent-session && docker rm vindicta-agent-session
 
 ## Troubleshooting
 
-| Issue | Fix |
-|---|---|
-| `bash\r` errors | Rebuild with `--no-cache` — Dockerfile runs `dos2unix` |
-| GPG errors | Ensure `GPG_PRIVATE_KEY` is base64-encoded (no newlines) |
-| `+` in email breaks PowerShell | Wrap the `-e` value in double quotes |
-| Container can't push | Check `AGENT_GITHUB_TOKEN` has `repo` scope |
+| Issue                          | Fix                                                      |
+| ------------------------------ | -------------------------------------------------------- |
+| `bash\r` errors                | Rebuild with `--no-cache` — Dockerfile runs `dos2unix`   |
+| GPG errors                     | Ensure `GPG_PRIVATE_KEY` is base64-encoded (no newlines) |
+| `+` in email breaks PowerShell | Wrap the `-e` value in double quotes                     |
+| Container can't push           | Check `AGENT_GITHUB_TOKEN` has `repo` scope              |

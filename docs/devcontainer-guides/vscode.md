@@ -9,6 +9,7 @@
 ## Setup
 
 1. **Open the repo in VS Code:**
+
    ```powershell
    code Vindicta-Agents
    ```
