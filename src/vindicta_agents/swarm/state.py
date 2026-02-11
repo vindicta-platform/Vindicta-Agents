@@ -1,4 +1,4 @@
-from typing import TypedDict, Annotated, List, Dict, Optional
+from typing import TypedDict, Annotated, List, Optional
 import operator
 
 class Task(TypedDict):
