@@ -4,6 +4,7 @@ from datetime import datetime
 from ..telemetry.monitor import HardwareMonitor
 from ..telemetry.models import HardwareState
 from .models import PriorityLevel, ComputeQuota, ThrottlingDecision
+from ..utils.logger import logger
 
 class ResourceGovernor:
     """
@@ -26,34 +27,45 @@ class ResourceGovernor:
         """
         state = self.monitor.get_latest_state()
         if not state:
-            # If no state is available yet, assume safe but caution
             return ThrottlingDecision(should_throttle=False)
 
-        # Thermal Throttling (Highest Priority Check)
+        # 1. Thermal Throttling (Highest Priority Check)
         for gpu in state.gpus:
             if gpu.temperature >= self.max_gpu_temp_c:
+                logger.warning("governor_throttle", type="thermal", gpu_id=gpu.id, temp=gpu.temperature)
                 return ThrottlingDecision(
                     should_throttle=True,
                     reason=f"Thermal Throttling: GPU {gpu.id} at {gpu.temperature}C",
                     suggested_wait_time=5.0
                 )
 
-        # Memory Pressure
+        # 2. CPU Pressure (Newly added)
+        if state.cpu.total_percent >= self.max_cpu_percent:
+             if priority not in [PriorityLevel.CRITICAL, PriorityLevel.HIGH]:
+                logger.warning("governor_throttle", type="cpu", usage=state.cpu.total_percent)
+                return ThrottlingDecision(
+                    should_throttle=True,
+                    reason=f"CPU Pressure: {state.cpu.total_percent}% used",
+                    suggested_wait_time=3.0
+                )
+
+        # 3. Memory Pressure
         if state.memory.percent >= self.max_memory_percent:
             if priority in [PriorityLevel.LOW, PriorityLevel.IDLE]:
+                 logger.warning("governor_throttle", type="memory", usage=state.memory.percent)
                  return ThrottlingDecision(
                     should_throttle=True,
                     reason=f"Memory Pressure: {state.memory.percent}% used",
                     suggested_wait_time=2.0
                 )
 
-        # VRAM Pressure
+        # 4. VRAM Pressure
         for gpu in state.gpus:
-             # Calculate percentage since we only have raw values
             if gpu.memory_total > 0:
                 vram_percent = (gpu.memory_used / gpu.memory_total) * 100
                 if vram_percent >= self.max_gpu_memory_percent:
                      if priority != PriorityLevel.CRITICAL:
+                        logger.warning("governor_throttle", type="vram", gpu_id=gpu.id, usage=vram_percent)
                         return ThrottlingDecision(
                             should_throttle=True,
                             reason=f"VRAM Pressure: GPU {gpu.id} at {vram_percent:.1f}%",
@@ -66,9 +78,8 @@ class ResourceGovernor:
         """
         Allocates resources for a task. Returns True if successful.
         """
-        # In a real implementation, this would reserve resources.
-        # For now, we just track the allocation.
         self.active_tasks[task_id] = quota
+        logger.debug("resource_allocated", task_id=task_id)
         return True
 
     def release_resources(self, task_id: str):
@@ -77,3 +88,4 @@ class ResourceGovernor:
         """
         if task_id in self.active_tasks:
             del self.active_tasks[task_id]
+            logger.debug("resource_released", task_id=task_id)

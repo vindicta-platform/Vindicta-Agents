@@ -1,33 +1,31 @@
 import asyncio
 import uuid
 import json
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 from vindicta_agents.supervisor.gatekeeper import AxiomaticSupervisor, AxiomApproval, ConstitutionalHalt
 from vindicta_agents.shared.memory import SharedMemory
 from vindicta_agents.simulation.scenarios import Scenario, ScenarioAction
-from vindicta_agents.utils.logger import FlightRecorder
+from vindicta_agents.utils.logger import FlightRecorder, logger
 
 class ShadowNexus:
     """
     Simulated Nexus Orchestrator for Shadow Mode.
     Executes predefined scenarios to validate Supervisor logic.
     """
-    def __init__(self):
-        self.supervisor = AxiomaticSupervisor()
+    def __init__(self, supervisor: Optional[AxiomaticSupervisor] = None):
+        self.supervisor = supervisor or AxiomaticSupervisor()
         self.memory = SharedMemory()
-        self.recorder = FlightRecorder() # Access existing DB or create new test DB?
-        # For simulation, we might want a separate DB or just use the main one with specific trace_ids.
-        # Supervisor already has a reference to recorder.
+        self.recorder = FlightRecorder()
 
     def load_scenario(self, scenario: Scenario):
         """
         Resets state and loads the scenario.
         """
-        print(f"[SHADOW] Loading Scenario: {scenario.name}")
+        logger.info("loading_scenario", scenario=scenario.name)
         self.memory.reset()
         if scenario.initial_state_delta:
             self.memory.state.update(scenario.initial_state_delta)
-        print(f"[SHADOW] Initial State: {self.memory.state}")
+        logger.debug("scenario_initial_state", state=str(self.memory.state))
 
     async def run_scenario(self, scenario: Scenario) -> Dict[str, Any]:
         """
@@ -43,17 +41,16 @@ class ShadowNexus:
 
         for action in scenario.actions:
             trace_id = str(uuid.uuid4())
-            print(f"[SHADOW] Tick {action.tick}: Agent {action.agent_id} attempting {action.action_type}...")
+            logger.info("scenario_tick", tick=action.tick, agent_id=action.agent_id, action_type=action.action_type)
             
             # 1. Propose State Transition (Simulated Agent Action)
-            # In real Nexus, this comes via WebSocket. Here, we call Supervisor directly.
-            
             outcome = self.supervisor.verify_state_transition(
                 trace_id=trace_id,
                 proposed_delta=action.payload
             )
             
             # 2. Verify Outcome
+            # Match against AXIOM_APPROVAL or CONSTITUTIONAL_HALT
             actual_type = "AXIOM_APPROVAL" if isinstance(outcome, AxiomApproval) else "CONSTITUTIONAL_HALT"
             match = actual_type == action.expected_outcome
             
@@ -69,8 +66,8 @@ class ShadowNexus:
             
             if not match:
                 results["passed"] = False
-                print(f"  [FAIL] Expected {action.expected_outcome}, got {actual_type}")
+                logger.error("step_failure", expected=action.expected_outcome, actual=actual_type, tick=action.tick)
             else:
-                print(f"  [PASS] {actual_type} confirmed.")
+                logger.info("step_success", outcome=actual_type, tick=action.tick)
                 
         return results

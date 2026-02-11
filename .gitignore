@@ -13,10 +13,12 @@ secring.*
 # OS
 .DS_Store
 Thumbs.db
+*.db
 
 # IDE
 .vscode/
 .idea/
+.langgraph_api/
 *.swp
 *.swo
 
@@ -30,6 +32,9 @@ __pycache__/
 
 # Logs
 automation/logs/
+*.log
+report.xml
+simulation_output.txt
 
 # Output
 output/

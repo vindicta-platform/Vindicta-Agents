@@ -1,10 +1,9 @@
-
 import psutil
-import GPUtil
 import asyncio
 from typing import List, Optional, Callable
 from datetime import datetime
 from .models import HardwareState, CPUState, MemoryState, GPUState
+from ..utils.logger import logger
 
 class HardwareMonitor:
     """
@@ -45,11 +44,11 @@ class HardwareMonitor:
                     try:
                         callback(state)
                     except Exception as e:
-                        print(f"[Monitor] Error in callback: {e}")
+                        logger.error("monitor_callback_error", error=str(e))
                         
                 await asyncio.sleep(self.polling_interval)
             except Exception as e:
-                print(f"[Monitor] Error collecting metrics: {e}")
+                logger.error("metrics_collection_error", error=str(e))
                 await asyncio.sleep(self.polling_interval)
 
     def _collect_metrics(self) -> HardwareState:
@@ -77,6 +76,7 @@ class HardwareMonitor:
         # GPU
         gpus = []
         try:
+            import GPUtil
             gpu_list = GPUtil.getGPUs()
             for gpu in gpu_list:
                 gpus.append(GPUState(
@@ -87,9 +87,11 @@ class HardwareMonitor:
                     memory_total=gpu.memoryTotal,
                     temperature=gpu.temperature
                 ))
-        except Exception:
-            # GPUtil might fail if no NVIDIA driver is present or on non-Windows/Linux
+        except ImportError:
+            # Expected if GPUtil is not installed in the current environment
             pass
+        except Exception as e:
+            logger.debug("gpu_metrics_collection_failed", error=str(e))
 
         return HardwareState(
             timestamp=datetime.now(),

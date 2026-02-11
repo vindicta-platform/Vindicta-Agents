@@ -6,7 +6,7 @@ class ScenarioAction(BaseModel):
     tick: int
     action_type: str
     payload: Dict[str, Any]
-    expected_outcome: str  # "APPROVED", "CONSTITUTIONAL_HALT"
+    expected_outcome: str  # "AXIOM_APPROVAL", "CONSTITUTIONAL_HALT"
 
 class Scenario(BaseModel):
     name: str
