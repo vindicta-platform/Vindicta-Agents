@@ -5,6 +5,11 @@ import uuid
 import asyncio
 import uvicorn
 import json
+from contextlib import asynccontextmanager
+from ..utils.logger import logger
+from ..telemetry.monitor import HardwareMonitor
+from ..governor.resource_manager import ResourceGovernor
+from ..governor.models import PriorityLevel
 
 # Data Models
 class WARScribeEnvelope(BaseModel):
@@ -27,38 +32,32 @@ class AgentRegistry:
     async def connect(self, agent_id: str, websocket: WebSocket):
         await websocket.accept()
         self.active_connections[agent_id] = websocket
-        print(f"[NEXUS] Agent Connected: {agent_id}")
+        logger.info("agent_connected", agent_id=agent_id)
 
     def disconnect(self, agent_id: str):
         if agent_id in self.active_connections:
             del self.active_connections[agent_id]
-            print(f"[NEXUS] Agent Disconnected: {agent_id}")
+            logger.info("agent_disconnected", agent_id=agent_id)
 
     async def send_personal_message(self, message: str, agent_id: str):
         if agent_id in self.active_connections:
             await self.active_connections[agent_id].send_text(message)
 
-from ..telemetry.monitor import HardwareMonitor
-from ..governor.resource_manager import ResourceGovernor
-from ..governor.models import PriorityLevel
-
-# Nexus Application
-app = FastAPI()
-registry = AgentRegistry()
-
 # Initialize Telemetry & Governor
 monitor = HardwareMonitor()
 governor = ResourceGovernor(monitor)
 
-@app.on_event("startup")
-async def startup_event():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     monitor.start()
-    print("[NEXUS] Hardware Monitor Started")
-
-@app.on_event("shutdown")
-async def shutdown_event():
+    logger.info("nexus_startup", monitor_status="started")
+    yield
     monitor.stop()
-    print("[NEXUS] Hardware Monitor Stopped")
+    logger.info("nexus_shutdown", monitor_status="stopped")
+
+# Nexus Application
+app = FastAPI(lifespan=lifespan)
+registry = AgentRegistry()
 
 @app.websocket("/ws/{agent_id}")
 async def websocket_endpoint(websocket: WebSocket, agent_id: str):
@@ -72,6 +71,7 @@ async def websocket_endpoint(websocket: WebSocket, agent_id: str):
             "wait_time": decision.suggested_wait_time
         }))
         await websocket.close()
+        logger.warning("handshake_throttled", agent_id=agent_id, reason=decision.reason)
         return
 
     await registry.connect(agent_id, websocket)
@@ -84,7 +84,7 @@ async def websocket_endpoint(websocket: WebSocket, agent_id: str):
                 envelope = WARScribeEnvelope(**envelope_dict)
                 
                 # 2. Process Message (Stub for Supervisor integration)
-                print(f"[NEXUS] Received from {agent_id}: {envelope.action}")
+                logger.info("message_received", sender=agent_id, action=envelope.action, trace_id=envelope.trace_id)
                 
                 # Echo back for confirmation (Temporary)
                 response = {
@@ -97,7 +97,7 @@ async def websocket_endpoint(websocket: WebSocket, agent_id: str):
                 await registry.send_personal_message(json.dumps(response), agent_id)
                 
             except Exception as e:
-                print(f"[NEXUS] Error processing message: {e}")
+                logger.error("message_process_error", agent_id=agent_id, error=str(e))
                 error_response = {"error": str(e)}
                 await registry.send_personal_message(json.dumps(error_response), agent_id)
 

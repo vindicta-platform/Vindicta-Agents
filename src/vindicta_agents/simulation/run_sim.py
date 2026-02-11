@@ -3,6 +3,7 @@ import argparse
 import sys
 from vindicta_agents.simulation.shadow_nexus import ShadowNexus
 from vindicta_agents.simulation.scenarios import SCENARIO_BOUNDARY_VIOLATION
+from vindicta_agents.utils.logger import logger
 
 SCENARIOS = {
     "boundary_violation": SCENARIO_BOUNDARY_VIOLATION
@@ -14,17 +15,17 @@ async def main():
     args = parser.parse_args()
 
     if args.scenario not in SCENARIOS:
-        print(f"Error: Scenario '{args.scenario}' not found. Available: {list(SCENARIOS.keys())}")
+        logger.error("scenario_not_found", scenario=args.scenario, available=list(SCENARIOS.keys()))
         sys.exit(1)
 
     scenario = SCENARIOS[args.scenario]
     nexus = ShadowNexus()
     
-    print(f"\n[SIMULATION] Starting '{scenario.name}'...")
-    print(f"[DESC] {scenario.description}\n")
+    logger.info("simulation_starting", scenario=scenario.name, description=scenario.description)
     
     report = await nexus.run_scenario(scenario)
     
+    # We still want a readable report on the console
     print("\n" + "="*40)
     print(f"REPORT: {scenario.name}")
     print("="*40)
@@ -43,6 +44,8 @@ async def main():
         print(f"{step['tick']:<6} {step['agent']:<20} {step['expected']:<20} {step['actual']:<20} {result_icon}")
     
     print("="*40 + "\n")
+    
+    logger.info("simulation_complete", passed=report["passed"])
 
 if __name__ == "__main__":
     asyncio.run(main())

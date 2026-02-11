@@ -4,6 +4,21 @@ import uuid
 from datetime import datetime
 from typing import Any, Dict, Optional
 import os
+import structlog
+
+# Initialize structlog
+structlog.configure(
+    processors=[
+        structlog.processors.add_log_level,
+        structlog.processors.TimeStamper(fmt="iso"),
+        structlog.processors.JSONRenderer(),
+    ],
+    context_class=dict,
+    logger_factory=structlog.PrintLoggerFactory(),
+    cache_logger_on_first_use=True,
+)
+
+logger = structlog.get_logger()
 
 class FlightRecorder:
     """
@@ -51,8 +66,14 @@ class FlightRecorder:
         
         conn.commit()
         conn.close()
-        # Also print to stdout for immediate visibility in this stage
-        print(f"[{component.upper()}] {event_type}: {trace_id}")
+        
+        # Use structlog instead of print
+        logger.info(
+            f"{event_type}",
+            component=component,
+            trace_id=trace_id,
+            **details
+        )
 
     def fetch_logs(self, trace_id: Optional[str] = None):
         """
@@ -63,7 +84,7 @@ class FlightRecorder:
         cursor = conn.cursor()
         
         if trace_id:
-            cursor.execute('SELECT * FROM flight_log WHERE trace_id = ? ORDER BY timestamp DESC', (trace_id,))
+             cursor.execute('SELECT * FROM flight_log WHERE trace_id = ? ORDER BY timestamp DESC', (trace_id,))
         else:
             cursor.execute('SELECT * FROM flight_log ORDER BY timestamp DESC LIMIT 100')
             

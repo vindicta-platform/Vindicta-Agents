@@ -35,18 +35,54 @@ class AITask(VindictaModel):
     Tasks are queued and executed based on priority and available quota.
     """
     name: str = Field(..., description="Human-readable task name")
+    system: Optional[str] = Field(default=None, description="System prompt for the task")
     prompt: str = Field(..., description="The prompt/payload to send")
     model: str = Field(default="gemini-1.5-flash", description="Target model")
     priority: RequestPriority = Field(
         default=RequestPriority.NORMAL,
         description="Task priority level",
     )
+    
+    history: List[Dict[str, str]] = Field(default_factory=list)
+    metadata: dict[str, Any] = Field(default_factory=dict)
     estimated_tokens: Optional[int] = Field(
         default=None,
         description="Estimated token count for proactive rate limiting",
     )
-    history: List[Dict[str, str]] = Field(default_factory=list)
-    metadata: dict[str, Any] = Field(default_factory=dict)
+
+    def execute(self, provider: Optional[Any] = None) -> str:
+        """Executes the task using an LLM backend (MOCKED for now)."""
+        if provider:
+            return provider.execute(self.system, self.prompt)
+        # Fallback to current mock
+        return f"[MOCKED EXECUTION] System: {self.system} | User: {self.prompt}"
+
+    def execute_json(self, provider: Optional[Any] = None) -> List[Dict[str, Any]]:
+        """Executes the task and returns JSON output (MOCKED for now)."""
+        if provider:
+            return provider.execute_json(self.system, self.prompt)
+            
+        # Mocking a list of tasks for the ADL usage pattern
+        return [
+            {
+                "id": "task-1",
+                "description": "Implement core engine logic",
+                "target_realm": "vindicta-engine",
+                "status": "pending"
+            },
+            {
+                "id": "task-2",
+                "description": "Implement warscribe parsing",
+                "target_realm": "warscribe-system",
+                "status": "pending"
+            },
+             {
+                "id": "task-3",
+                "description": "Implement economy features",
+                "target_realm": "vindicta-economy",
+                "status": "pending"
+            }
+        ]
 
 
 class TaskResult(VindictaModel):

@@ -1,11 +1,12 @@
-
 from pydantic import BaseModel, Field, PrivateAttr
 from typing import Optional, Any, Literal
 import uuid
 from uuid import UUID, uuid4
+import json
 
 from ..telemetry.models import ResourceUsage
 from ..governor.models import PriorityLevel
+from ..utils.logger import logger
 
 class ResourceRequirements(BaseModel):
     priority: PriorityLevel = PriorityLevel.NORMAL
@@ -18,7 +19,7 @@ class BaseAgent(BaseModel):
     agent_id: str
     agent_class: str
     realm: str
-    status: Literal["Offline", "Online", "Busy"] = "Offline"
+    status: Literal["Offline", "Online", "Busy", "Connected", "Connection Failed"] = "Offline"
     resources: Optional[ResourceRequirements] = None
     _websocket: Any = PrivateAttr(default=None)
 
@@ -26,12 +27,12 @@ class BaseAgent(BaseModel):
         """
         Initiates the handshake with the Nexus (simulated).
         """
-        # In a real implementation, this would communicate with the Nexus service.
-        # For this stage, we verify self-consistency.
         if not self.realm:
+            logger.warning("handshake_failed", agent_id=self.agent_id, reason="missing_realm")
             return False
         
         self.status = "Online"
+        logger.info("handshake_success", agent_id=self.agent_id)
         return True
 
     async def connect_to_nexus(self, nexus_url: str = "ws://localhost:8000/ws"):
@@ -43,11 +44,11 @@ class BaseAgent(BaseModel):
             uri = f"{nexus_url}/{self.agent_id}"
             self._websocket = await websockets.connect(uri)
             self.status = "Connected"
-            print(f"[{self.agent_id}] Connected to Nexus at {uri}")
+            logger.info("nexus_connected", agent_id=self.agent_id, uri=uri)
         except ImportError:
-            print("websockets library not found. Install with: uv add websockets")
+            logger.error("missing_dependency", library="websockets", agent_id=self.agent_id)
         except Exception as e:
-            print(f"[{self.agent_id}] Failed to connect to Nexus: {e}")
+            logger.error("nexus_connection_failed", agent_id=self.agent_id, error=str(e))
             self.status = "Connection Failed"
 
     async def send_envelope(self, action: str, payload: dict) -> None:
@@ -55,7 +56,7 @@ class BaseAgent(BaseModel):
         Sends a WARScribeEnvelope to the Nexus.
         """
         if not self._websocket:
-            print(f"[{self.agent_id}] Not connected to Nexus.")
+            logger.warning("message_send_skip", agent_id=self.agent_id, reason="not_connected")
             return
 
         envelope = {
@@ -66,15 +67,15 @@ class BaseAgent(BaseModel):
         }
         
         try:
-            import json
             await self._websocket.send(json.dumps(envelope))
-            # Wait for ACK (simple implementation)
+            # Wait for ACK
             response = await self._websocket.recv()
-            print(f"[{self.agent_id}] Nexus ACK: {response}")
+            logger.info("nexus_ack_received", agent_id=self.agent_id, action=action, response=response)
         except Exception as e:
-             print(f"[{self.agent_id}] Error sending message: {e}")
+            logger.error("message_send_failed", agent_id=self.agent_id, error=str(e))
 
     async def close(self):
         if self._websocket:
             await self._websocket.close()
             self.status = "Offline"
+            logger.info("nexus_connection_closed", agent_id=self.agent_id)
