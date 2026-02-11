@@ -29,13 +29,13 @@ $tasks = @(
 foreach ($task in $tasks) {
     $scriptPath = Join-Path $ScriptsPath $task.Script
     Write-Host "`nRegistering: $($task.Name)" -ForegroundColor Yellow
-    
+
     # Remove existing
     Unregister-ScheduledTask -TaskName $task.Name -TaskPath $TaskFolder -Confirm:$false -ErrorAction SilentlyContinue
-    
+
     # Create action
     $action = New-ScheduledTaskAction -Execute "pwsh.exe" -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$scriptPath`""
-    
+
     # Create trigger
     if ($task.Daily) {
         $trigger = New-ScheduledTaskTrigger -Daily -At $task.At
@@ -43,7 +43,7 @@ foreach ($task in $tasks) {
     else {
         $trigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek $task.Weekly -At $task.At
     }
-    
+
     # Register
     try {
         Register-ScheduledTask -TaskName $task.Name -TaskPath $TaskFolder -Action $action -Trigger $trigger -Description $task.Desc -User $env:USERNAME

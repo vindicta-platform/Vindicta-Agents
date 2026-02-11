@@ -26,12 +26,12 @@ def find_meso_repos(root_path: str = None) -> Dict[str, Dict[str, str]]:
         root_path = os.path.abspath(os.path.join(os.getcwd(), ".."))
 
     results = {}
-    
+
     for repo in MESO_REPOS:
         repo_path = os.path.join(root_path, repo)
         if os.path.exists(repo_path) and os.path.isdir(repo_path):
              results[repo] = {"path": repo_path, "status": "verified"}
         else:
              results[repo] = {"path": repo_path, "status": "missing"}
-             
+
     return results

@@ -40,22 +40,22 @@ Execute daily at 8:30 AM by Senior Manager agent.
 6. Generate Platform Status Report:
    ```markdown
    # Platform Status - [Date]
-   
+
    ## Sprint Execution (from ADL)
    - ✅ Completed: [count]
    - 🎯 In Progress: [count]
    - 🚨 Blockers: [count]
-   
+
    ## Roadmap Alignment (from PO)
    - On Track: [%]
    - At Risk: [%]
    - Scope Changes: [summary]
-   
+
    ## Platform Health
    - PR Merge Rate: [%]
    - Open Issues: [count]
    - Velocity Trend: [↑/→/↓]
-   
+
    ## Critical Actions Required
    - [Action 1]
    - [Action 2]

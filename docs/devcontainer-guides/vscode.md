@@ -37,18 +37,18 @@
 
 ## Useful Commands
 
-| Action | Command |
-|---|---|
-| Rebuild container | `Ctrl+Shift+P` → "Dev Containers: Rebuild Container" |
+| Action                      | Command                                                        |
+| --------------------------- | -------------------------------------------------------------- |
+| Rebuild container           | `Ctrl+Shift+P` → "Dev Containers: Rebuild Container"           |
 | Attach to running container | `Ctrl+Shift+P` → "Dev Containers: Attach to Running Container" |
-| View container logs | `Ctrl+Shift+P` → "Dev Containers: Show Container Log" |
-| Reopen locally | `Ctrl+Shift+P` → "Dev Containers: Reopen Folder Locally" |
+| View container logs         | `Ctrl+Shift+P` → "Dev Containers: Show Container Log"          |
+| Reopen locally              | `Ctrl+Shift+P` → "Dev Containers: Reopen Folder Locally"       |
 
 ## Troubleshooting
 
-| Issue | Fix |
-|---|---|
-| "Docker not running" | Start Docker Desktop |
-| Build fails | Run `Ctrl+Shift+P` → "Dev Containers: Rebuild Without Cache" |
-| `bash\r` error | Image needs rebuild — the Dockerfile includes `dos2unix` to fix this |
-| GPG key not found | Check `init-agent.sh` output in the terminal, re-run manually: `init-agent.sh` |
+| Issue                | Fix                                                                            |
+| -------------------- | ------------------------------------------------------------------------------ |
+| "Docker not running" | Start Docker Desktop                                                           |
+| Build fails          | Run `Ctrl+Shift+P` → "Dev Containers: Rebuild Without Cache"                   |
+| `bash\r` error       | Image needs rebuild — the Dockerfile includes `dos2unix` to fix this           |
+| GPG key not found    | Check `init-agent.sh` output in the terminal, re-run manually: `init-agent.sh` |

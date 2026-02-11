@@ -17,7 +17,8 @@ description: Comprehensive code review with mentoring feedback
 
 ### 2. Code Review Checklist
 Using MCP tools:
-```
+
+```yaml
 mcp_github-mcp-server_pull_request_read with method: get_diff
 mcp_github-mcp-server_pull_request_read with method: get_files
 ```

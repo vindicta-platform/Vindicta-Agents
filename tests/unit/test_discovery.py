@@ -15,12 +15,12 @@ def test_find_meso_repos_success(mock_isdir, mock_exists):
     # Mock that all looked-up paths exist
     mock_exists.return_value = True
     mock_isdir.return_value = True
-    
+
     # We need to mock the root path or how the function determines it.
     # Assuming the function uses CWD or a relative path from the verified Agent location.
-    
+
     repos = find_meso_repos("c:/Users/bfoxt/vindicta-platform")
-    
+
     assert "vindicta-foundation" in repos
     assert "vindicta-engine" in repos
     assert repos["vindicta-foundation"]["status"] == "verified"
@@ -33,11 +33,11 @@ def test_find_meso_repos_missing(mock_exists):
         if "vindicta-engine" in path:
             return False
         return True
-    
+
     mock_exists.side_effect = side_effect
-    
+
     repos = find_meso_repos("c:/Users/bfoxt/vindicta-platform")
-    
+
     assert "vindicta-engine" in repos
     assert repos["vindicta-engine"]["status"] == "missing"
     assert repos["vindicta-foundation"]["status"] == "verified"

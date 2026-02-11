@@ -14,7 +14,7 @@ function Get-VindictaWeek {
         [DateTime]$StartDate = "2026-02-04",
         [DateTime]$CurrentDate = (Get-Date)
     )
-    
+
     $days = ($CurrentDate - $StartDate).Days + 1
     return [math]::Ceiling($days / 7)
 }
@@ -27,7 +27,7 @@ function Get-GitHubIssues {
     param (
         [string]$Query
     )
-    
+
     try {
         $json = gh api -X GET "/search/issues" -f q=$Query --jq '.total_count' 2>&1
         if ($LASTEXITCODE -eq 0) {
@@ -51,12 +51,12 @@ function Submit-AgentTask {
         [string]$Prompt,
         [string]$Priority = "normal"
     )
-    
+
     try {
         # Integration point: python -m agent_auditor submit ...
         # Using Invoke-Expression or direct execution for testability
         $output = python -m agent_auditor submit "$Prompt" --priority $Priority --json 2>&1
-        
+
         if ($LASTEXITCODE -eq 0) {
             return ($output | ConvertFrom-Json)
         }
@@ -78,13 +78,13 @@ function Update-AgentReport {
         [string]$Status,
         [string]$ActivityEntry
     )
-    
+
     $ReportDir = Join-Path $PSScriptRoot "..\reports"
     if (-not (Test-Path $ReportDir)) { New-Item -ItemType Directory -Path $ReportDir -Force | Out-Null }
-    
+
     $ReportFile = Join-Path $ReportDir "${AgentName}_Report.md"
     $Date = Get-Date -Format "yyyy-MM-dd HH:mm"
-    
+
     # Header & Status Section
     $ReportContent = @"
 # $AgentName Automation Report
@@ -95,7 +95,7 @@ $Status
 
 ## Activity Log
 "@
-    
+
     # Read existing log if file exists
     $ExistingLog = ""
     if (Test-Path $ReportFile) {
@@ -104,11 +104,11 @@ $Status
             $ExistingLog = $matches[1].Trim()
         }
     }
-    
+
     # Prepend new entry
     $NewLogEntry = "- **$Date**: $ActivityEntry"
     $FullLog = "$NewLogEntry`n$ExistingLog"
-    
+
     # Write full report
     "$ReportContent`n$FullLog" | Set-Content $ReportFile -Encoding UTF8
 }
@@ -123,11 +123,11 @@ function Sync-GitHubEntity {
         [string]$Query,
         [string]$CommentBody
     )
-    
+
     try {
         # Find issue URL/Number
         $issueUrl = gh issue list --search "$Query" --json url --jq '.[0].url' 2>&1
-        
+
         if ($LASTEXITCODE -eq 0 -and -not [string]::IsNullOrWhiteSpace($issueUrl)) {
             # Add comment
             gh issue comment $issueUrl --body "$CommentBody" 2>&1 | Out-Null

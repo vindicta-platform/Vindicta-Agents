@@ -1,6 +1,6 @@
 # Product Owner
 
-> **Role**: Strategic, value-focused Product Owner  
+> **Role**: Strategic, value-focused Product Owner
 > **Goal**: Maximize stakeholder value through prioritization
 
 ## Responsibilities

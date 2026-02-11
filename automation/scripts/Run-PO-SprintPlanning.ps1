@@ -36,7 +36,7 @@ try {
             Log "  No ROADMAP.md or repo not found"
         }
     }
-    
+
     Log "Sprint planning summary prepared"
 }
 catch {

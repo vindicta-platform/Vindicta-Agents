@@ -12,4 +12,3 @@ def when_submit_to_swarm(context):
 @then('it should appear in the queue')
 def then_task_in_queue(context):
     assert context.queued is True
-

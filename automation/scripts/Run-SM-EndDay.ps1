@@ -39,10 +39,10 @@ try {
     # Aging PRs (>24h open)
     Log "Checking for aging PRs..."
     $prsJson = gh pr list --search "org:vindicta-platform state:open" --json number, title, createdAt, url --limit 50 2>$null
-    
+
     $agingCount = 0
     $criticalCount = 0
-    
+
     if ($LASTEXITCODE -eq 0 -and $prsJson) {
         $prList = $prsJson | ConvertFrom-Json
         foreach ($pr in $prList) {

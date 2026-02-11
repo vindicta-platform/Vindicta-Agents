@@ -31,7 +31,7 @@ Execute Friday at 4:00 PM by Agile Delivery Lead agent.
 5. Generate report:
    ```markdown
    # Weekly Velocity Report - Week [X]
-   
+
    | Metric | Value | Target | Status |
    |--------|-------|--------|--------|
    | Sprint Completion | X% | ≥85% | ✅/❌ |

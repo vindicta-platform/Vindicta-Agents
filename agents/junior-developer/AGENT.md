@@ -1,6 +1,6 @@
 # Junior Developer
 
-> **Role**: Learning contributor and support specialist  
+> **Role**: Learning contributor and support specialist
 > **Goal**: Learn best practices while contributing to the platform
 
 ## Responsibilities

@@ -5,16 +5,12 @@ from datetime import datetime
 from pydantic import ValidationError
 
 # Verify that the module can be imported (will fail initially)
-try:
-    from vindicta_agents.foundation.axioms import (
-        EntityIdentity,
-        Dimensionality,
-        ProbabilitySource,
-        TemporalDiscretization,
-        Phase
-    )
-except ImportError:
-    pytest.fail("Could not import axioms module")
+from vindicta_agents.foundation.axioms import (
+    EntityIdentity,
+    Dimensionality,
+    ProbabilitySource,
+    TemporalDiscretization,
+)
 
 def test_entity_identity_valid():
     """Test that EntityIdentity creates a valid UUID and timestamp."""
@@ -40,7 +36,7 @@ def test_dimensionality_out_of_bounds():
     # X max is 44, Y max is 60
     with pytest.raises(ValidationError):
         Dimensionality(x=45.0, y=10.0, z=0.0)
-    
+
     with pytest.raises(ValidationError):
         Dimensionality(x=10.0, y=61.0, z=0.0)
 
@@ -53,7 +49,7 @@ def test_temporal_discretization():
     """Test discrete phases."""
     phase = TemporalDiscretization(current_phase=1)
     assert phase.current_phase == 1
-    
+
     # Should not accept floats for integer phases if strict
     # Pydantic might coerce float to int, but logic should handle it.
     # Here we just check basic assignment.

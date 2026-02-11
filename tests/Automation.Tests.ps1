@@ -4,14 +4,14 @@ $ErrorActionPreference = "Stop"
 Import-Module "$PSScriptRoot\..\automation\modules\VindictaAgents.Automation.psm1" -Force
 
 Describe "VindictaAgents.Automation Unit Tests" {
-    
+
     Context "Unit: Logic Functions" {
         It "Calculates Week 1 correctly" {
             $date = [DateTime]"2026-02-05" # Day 2
             $week = Get-VindictaWeek -CurrentDate $date
             $week | Should Be 1
         }
-        
+
         It "Calculates Week 2 correctly" {
             $date = [DateTime]"2026-02-12" # Day 9
             $week = Get-VindictaWeek -CurrentDate $date
@@ -21,27 +21,27 @@ Describe "VindictaAgents.Automation Unit Tests" {
 }
 
 Describe "VindictaAgents.Automation Mock Tests" {
-    
+
     # Run inside module scope so mocks overlay the external commands correctly
     InModuleScope "VindictaAgents.Automation" {
-    
+
         Context "Mock: GitHub Integration" {
             # Define 'gh' as a function to mock the external command
             function gh { $global:LASTEXITCODE = 0; return "42" }
-            
+
             It "Parses issue count from gh output" {
                 $count = Get-GitHubIssues -Query "org:test"
                 $count | Should Be 42
             }
         }
-        
+
         Context "Mock: SDK Integration" {
             # Define 'python' as a function to mock the external command
-            function python { 
+            function python {
                 $global:LASTEXITCODE = 0
-                return '{ "task_id": "123", "status": "queued" }' 
+                return '{ "task_id": "123", "status": "queued" }'
             }
-            
+
             It "Submits task and parses JSON result" {
                 $result = Submit-AgentTask -Prompt "Test Task"
                 $result.task_id | Should Be "123"
@@ -54,12 +54,12 @@ Describe "VindictaAgents.Automation Mock Tests" {
             # In Pester 3, mocking Set-Content might be tricky if it's not a function.
             # But we can try mocking the *calls* if the module uses cmdlets.
             # NOTE: Pester 3 Mocking of cmdlets like Set-Content works.
-            
+
             Mock Test-Path { return $true }
             Mock Get-Content { return "# Report`n## Activity Log`n- Old Entry" }
             Mock Set-Content { }
             Mock New-Item { }
-            
+
             It "Update-AgentReport calls Set-Content with appended log" {
                 Update-AgentReport -AgentName "TestAgent" -Status "OK" -ActivityEntry "New Action"
                 Assert-MockCalled Set-Content -Times 1
@@ -68,7 +68,7 @@ Describe "VindictaAgents.Automation Mock Tests" {
 
         Context "Mock: GitHub Sync" {
             # Override gh for sync
-            function gh { 
+            function gh {
                 $global:LASTEXITCODE = 0
                 # Issue Search: gh issue list
                 if ($args[1] -match "list") { return '[{"url":"https://github.com/org/repo/issues/1"}]' }
@@ -81,15 +81,15 @@ Describe "VindictaAgents.Automation Mock Tests" {
                 $result = Sync-GitHubEntity -Query "test" -CommentBody "Update"
                 $result | Should Be $true
             }
-            
+
             It "Sync-GitHubEntity returns false if no issue found" {
                 # Override gh to return empty list
-                function gh { 
+                function gh {
                     $global:LASTEXITCODE = 0
-                    if ($args[1] -match "list") { return '[]' } 
+                    if ($args[1] -match "list") { return '[]' }
                     return ""
                 }
-                 
+
                 $result = Sync-GitHubEntity -Query "missing" -CommentBody "Update"
                 $result | Should Be $false
             }

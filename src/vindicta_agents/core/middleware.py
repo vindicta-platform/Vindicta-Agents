@@ -5,10 +5,10 @@ from vindicta_agents.foundation.axioms import Dimensionality, EntityIdentity
 def validate_intent(intent: Any) -> bool:
     """
     Constitutional Middleware: Checks any proposed move against the Axioms.
-    
+
     Args:
         intent: A WARScribeEntry or compatible object with x/y/z attributes.
-        
+
     Returns:
         bool: True if valid, raises ValueError (Constitutional Violation) otherwise.
     """
@@ -18,7 +18,7 @@ def validate_intent(intent: Any) -> bool:
         # If it initiates without error, it's valid.
         z = getattr(intent, 'z', 0.0)
         Dimensionality(x=intent.x, y=intent.y, z=z)
-        
+
     # Additional checks can be added here
-    
+
     return True

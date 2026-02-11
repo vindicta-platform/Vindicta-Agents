@@ -58,11 +58,11 @@
 
 ### Collaboration Patterns
 
-**SM orchestrates**: ADL + PO workflows (check-in, start-work, end-day)  
-**ADL ↔ PO**: Daily async sync (standup + roadmap)  
-**SSE ↔ Architect**: Architecture reviews  
-**SSE ↔ Senior Dev**: Code reviews, guidance  
-**Senior Dev ↔ Junior Dev**: Mentoring, simple reviews  
+**SM orchestrates**: ADL + PO workflows (check-in, start-work, end-day)
+**ADL ↔ PO**: Daily async sync (standup + roadmap)
+**SSE ↔ Architect**: Architecture reviews
+**SSE ↔ Senior Dev**: Code reviews, guidance
+**Senior Dev ↔ Junior Dev**: Mentoring, simple reviews
 
 ---
 

@@ -1,6 +1,6 @@
 # Senior Software Engineer
 
-> **Role**: Technical lead and code quality guardian  
+> **Role**: Technical lead and code quality guardian
 > **Goal**: Deliver production-grade code and mentor the team
 
 ## Responsibilities

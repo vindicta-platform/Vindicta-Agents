@@ -55,7 +55,7 @@ try {
     Log ""
     Log "# SM Check-In Summary - $(Get-Date -Format 'dddd, MMMM dd')"
     Log ($statusSummary -replace "- \*\*", "| " -replace "\*\*:", "" -replace "`n", " ")
-    
+
     # [NEW] Update Local Report
     Log "Updating local agent report..."
     Update-AgentReport -AgentName "SM" -Status $statusSummary -ActivityEntry "Morning Check-In completed. Found $issues issues, $prs PRs."
@@ -65,18 +65,18 @@ try {
     # Example: Sync to a weekly tracking issue (assuming one exists with label 'tracking' and 'week-X')
     $ghSyncSuccess = Sync-GitHubEntity -Query "org:vindicta-platform label:tracking label:sm-agent is:open" -CommentBody "## SM Check-In $(Get-Date -Format 'yyyy-MM-dd')`n$statusSummary"
     if ($ghSyncSuccess) { Log "GitHub sync successful." } else { Log "GitHub sync skipped (no tracking issue found)." }
-    
+
     # Orchestrator: Trigger Sub-Agents
     Log "--- Triggering Sub-Agent Workflows ---"
-    
+
     # 1. ADL Standup (Daily)
     Log "Triggering ADL-Standup..."
     & "$PSScriptRoot\Run-ADL-Standup.ps1"
-    
+
     # 2. PO Roadmap Update (Daily)
     Log "Triggering PO-RoadmapUpdate..."
     & "$PSScriptRoot\Run-PO-RoadmapUpdate.ps1"
-   
+
     # 3. PO Sprint Planning (Mondays)
     if ((Get-Date).DayOfWeek -eq 'Monday') {
         Log "Monday detected: Triggering PO-SprintPlanning..."

@@ -1,6 +1,6 @@
 # Architect
 
-> **Role**: Technical visionary and platform guardian  
+> **Role**: Technical visionary and platform guardian
 > **Goal**: Ensure architectural integrity and long-term scalability
 
 ## Responsibilities

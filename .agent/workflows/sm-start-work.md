@@ -56,13 +56,13 @@ Trigger implementation phase across sub-agents.
    - Add issues to **Project #4** (Platform Roadmap) for sprint tracking
    - Update status label to `status:in-progress`
    - Set milestone based on sprint week
-   
+
    **MCP Tools for Project Updates:**
    ```
    # Add issue to project (requires project and issue node IDs)
    mcp_github-mcp-server_add_issue_comment
    body: "📋 Added to Project #3 (Roadmap) and #4 (Sprint)"
-   
+
    # Update issue labels for tracking
    mcp_github-mcp-server_issue_write
    method: "update"
@@ -72,19 +72,19 @@ Trigger implementation phase across sub-agents.
 6. Generate Kickoff Summary:
    ```markdown
    # Work Session Started - [Date]
-   
+
    ## Sprint Goals
    - [Goal 1]
    - [Goal 2]
-   
+
    ## Work Assigned
    - Junior Developer: [count] items
    - Senior Developer: [count] items
    - Senior Software Engineer: [count] items
-   
+
    ## Architecture Reviews Pending
    - [Issue #X]: [title]
-   
+
    ## Expected Deliverables Today
    - [Deliverable 1]
    - [Deliverable 2]

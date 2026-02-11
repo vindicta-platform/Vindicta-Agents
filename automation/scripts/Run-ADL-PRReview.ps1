@@ -25,25 +25,25 @@ try {
     $prs = gh search prs --state open --owner vindicta-platform --json "number,title,createdAt,author,url" --limit 50 2>&1
     $count = 0
     $reviewNeeded = 0
-    
+
     if ($LASTEXITCODE -eq 0 -and $prs) {
         $prList = $prs | ConvertFrom-Json
         $count = $prList.Count
         Log "Found $count open PRs"
-        
+
         foreach ($pr in $prList) {
             $age = ((Get-Date) - [DateTime]$pr.createdAt).TotalHours
             $status = if ($age -gt 48) { "⚠️ AGING" } elseif ($age -gt 24) { "⏰ >24h" } else { "✅ OK" }
             Log "  PR #$($pr.number): $($pr.title) - $status ($([math]::Round($age))h)"
         }
     }
-    
+
     # Check for PRs without reviews (Simple placeholder logic)
     Log "Checking for PRs without reviews..."
     # In full implementation, we'd query reviewDecision
-    
+
     $statusSummary = "PR Sweep Complete. Open: $count."
-    
+
     # Update Report (ADL shares report)
     Log "Updating local agent report..."
     Update-AgentReport -AgentName "ADL" -Status $statusSummary -ActivityEntry "PR Review completed. Found $count open PRs."

@@ -16,9 +16,11 @@ Windsurf is built on the VS Code engine and supports dev containers via the same
    - Install it
 
 2. **Open the repo:**
+
    ```powershell
    windsurf Vindicta-Agents
    ```
+
    Or: `File → Open Folder → Vindicta-Agents/`
 
 3. **Reopen in Container:**
@@ -29,6 +31,7 @@ Windsurf is built on the VS Code engine and supports dev containers via the same
 4. **Wait for the build** (2-3 min first time). The `init-agent.sh` runs automatically.
 
 5. **Verify in terminal** (`` Ctrl+` ``):
+
    ```bash
    git config user.name       # → vindicta-bot
    gpg --list-secret-keys     # → agent's GPG key
@@ -47,8 +50,8 @@ When using Windsurf's Cascade AI inside the dev container:
 
 ## Troubleshooting
 
-| Issue | Fix |
-|---|---|
+| Issue                              | Fix                                                                                  |
+| ---------------------------------- | ------------------------------------------------------------------------------------ |
 | Dev Containers extension not found | Check Windsurf's extension compatibility; may need the VSIX from VS Code marketplace |
-| Container build fails | Try `Ctrl+Shift+P` → "Dev Containers: Rebuild Without Cache" |
-| Cascade uses wrong git identity | Ensure you're using the terminal **inside** the container, not the host terminal |
+| Container build fails              | Try `Ctrl+Shift+P` → "Dev Containers: Rebuild Without Cache"                         |
+| Cascade uses wrong git identity    | Ensure you're using the terminal **inside** the container, not the host terminal     |

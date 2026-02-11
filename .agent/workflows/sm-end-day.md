@@ -40,26 +40,26 @@ Execute daily at 6:00 PM by Senior Manager agent.
 5. Generate End-of-Day Handoff:
    ```markdown
    # End of Day Report - [Date]
-   
+
    ## Today's Accomplishments
    - Issues Completed: [count]
    - PRs Merged: [count]
    - Velocity: [↑/→/↓]
-   
+
    ## PR Status
    - Pending Review: [count]
    - Approved (awaiting merge): [count]
    - Changes Requested: [count]
-   
+
    ## Active Blockers
    - [Blocker 1] - Age: [hours]
    - [Blocker 2] - Age: [hours]
-   
+
    ## Tomorrow's Focus
    - In Progress: [count] items
    - Ready to Start: [count] items
    - Potential Blockers: [list]
-   
+
    ## Weekly Summary (Fridays only)
    [Include full weekly report from /adl-weekly-report]
    ```

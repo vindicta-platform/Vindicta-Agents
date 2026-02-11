@@ -11,7 +11,7 @@ class BaseAgent(BaseModel):
     agent_class: str
     realm: str
     status: Literal["Offline", "Online", "Busy"] = "Offline"
-    
+
     def handshake(self) -> bool:
         """
         Initiates the handshake with the Nexus (simulated).
@@ -20,6 +20,6 @@ class BaseAgent(BaseModel):
         # For this stage, we verify self-consistency.
         if not self.realm:
             return False
-        
+
         self.status = "Online"
         return True

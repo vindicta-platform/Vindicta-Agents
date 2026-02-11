@@ -17,7 +17,7 @@ def test_validate_intent_valid():
         def __init__(self, x, y):
             self.x = x
             self.y = y
-            
+
     intent = MockIntent(10.0, 20.0)
     # Validation should succeed (return True or None)
     assert validate_intent(intent) is True
@@ -28,7 +28,7 @@ def test_validate_intent_invalid_coords():
         def __init__(self, x, y):
             self.x = x
             self.y = y
-            
+
     intent = MockIntent(-5.0, 20.0)
     with pytest.raises(ValueError, match="Constitutional Violation"):
         validate_intent(intent)
