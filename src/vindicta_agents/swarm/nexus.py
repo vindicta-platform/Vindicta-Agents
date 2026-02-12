@@ -12,7 +12,7 @@ def human_review_node(state: VindictaState):
     # Returning state (full object) can cause issues with state merging in some LangGraph configs.
     return {}
 
-def build_master_graph():
+def build_master_graph(interrupt: bool = True):
     master_builder = StateGraph(VindictaState)
 
     # Add the sub-graphs as nodes
@@ -28,11 +28,12 @@ def build_master_graph():
     # Use MemorySaver for development visualization
     memory = MemorySaver()
 
-    # Compile with a hard interrupt before the Domain Execution
-    return master_builder.compile(
-        checkpointer=memory,
-        interrupt_before=["ExecutionPhase"] # IT STOPS HERE WAITING FOR YOU
-    )
+    # Compile with optional interrupt
+    compile_kwargs = {"checkpointer": memory}
+    if interrupt:
+        compile_kwargs["interrupt_before"] = ["ExecutionPhase"]
+        
+    return master_builder.compile(**compile_kwargs)
 
-# Export the compiled swarm instance
+# Export the compiled swarm instance with default behavior
 vindicta_swarm = build_master_graph()
