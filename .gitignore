@@ -29,6 +29,11 @@ node_modules/
 __pycache__/
 *.pyc
 .venv/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.coverage
+.coverage.*
 
 # Logs
 automation/logs/
@@ -39,3 +44,4 @@ simulation_output.txt
 # Output
 output/
 .keys/
+.files/
