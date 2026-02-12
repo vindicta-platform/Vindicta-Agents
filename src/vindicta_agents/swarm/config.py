@@ -11,6 +11,8 @@ Usage:
     }})
 """
 
+import json
+import urllib.request
 from typing import Any, Protocol, TypedDict, runtime_checkable
 
 
@@ -50,6 +52,46 @@ class MockLLMProvider:
                 "status": "pending",
             },
         ]
+
+
+class OllamaLLMProvider:
+    """
+    Ollama implementation of LLMProvider protocol.
+    Connects to local Ollama instance (default: http://localhost:11434).
+    """
+    def __init__(self, model: str = "llama3", base_url: str = "http://localhost:11434"):
+        self.model = model
+        self.base_url = base_url
+
+    def execute(self, system: str | None, prompt: str) -> str:
+        
+        url = f"{self.base_url}/api/generate"
+        payload = {
+            "model": self.model,
+            "prompt": f"System: {system}\nUser: {prompt}" if system else prompt,
+            "stream": False
+        }
+        
+        try:
+            req = urllib.request.Request(
+                url, 
+                data=json.dumps(payload).encode('utf-8'), 
+                headers={'Content-Type': 'application/json'}
+            )
+            with urllib.request.urlopen(req) as response:
+                result = json.loads(response.read().decode('utf-8'))
+                return result.get("response", "")
+        except Exception as e:
+            return f"[Ollama Error] {str(e)}"
+
+    def execute_json(self, system: str | None, prompt: str) -> list[dict]:
+        """Execute and parse JSON from the response, stripping markdown fences."""
+        response = self.execute(system, prompt + "\nRespond ONLY with valid JSON.")
+        try:
+            clean = response.replace("```json", "").replace("```", "").strip()
+            return json.loads(clean)
+        except (json.JSONDecodeError, ValueError):
+            return []
 
 
 class SwarmConfig(TypedDict, total=False):

@@ -1,55 +1,140 @@
+"""
+Meta Graph Module
+=================
+
+This module defines the high-level planning graph for the Vindicta Swarm.
+It orchestrates the transformation of a user intent into an executable task list via a chain of specialized AI agents:
+1. **Product Owner (PO)**: Converts user intent into a functional specification.
+2. **Architect**: Converts the specification into a technical implementation plan.
+3. **Agile Delivery Lead (ADL)**: Breaks the plan down into discrete, assignable tasks for domain agents.
+
+The graph is constructed dynamically from a configuration registry, allowing for easier adjustment of prompts and agent flows.
+"""
+
+from typing import Any, Dict, List, Optional, TypedDict, Callable
 from langgraph.graph import StateGraph, END
 from langchain_core.runnables import RunnableConfig
+
 from .state import VindictaState
 from vindicta_agents.sdk.models import AITask
 from .config import MockLLMProvider
 
 
-def product_owner_node(state: VindictaState, config: RunnableConfig):
-    configurable = config.get("configurable", {})
-    provider = configurable.get("llm_provider", MockLLMProvider())
-
-    task = AITask(
-        name="Spec Creation",
-        system="You are the PO.",
-        prompt=f"Write a spec for: {state['intent']}",
-    )
-    return {"spec_content": task.execute(provider=provider), "current_phase": "planning"}
-
-
-def architect_node(state: VindictaState, config: RunnableConfig):
-    configurable = config.get("configurable", {})
-    provider = configurable.get("llm_provider", MockLLMProvider())
-
-    spec = state.get("spec_content", "")
-    task = AITask(
-        name="Plan Creation",
-        system="You are the Architect.",
-        prompt=f"Draft a plan based on this spec:\n{spec}",
-    )
-    return {"plan_content": task.execute(provider=provider)}
+class AgentConfig(TypedDict, total=False):
+    """Configuration for a planning agent node."""
+    task_name: str
+    system_prompt: str
+    input_key: str
+    output_key: str
+    prompt_template: str
+    phase_update: Optional[str]
+    json_mode: bool
 
 
-def adl_node(state: VindictaState, config: RunnableConfig):
-    configurable = config.get("configurable", {})
-    provider = configurable.get("llm_provider", MockLLMProvider())
+# --- Configuration Registry ---
 
-    plan = state.get("plan_content", "")
-    task = AITask(
-        name="Task Slicing",
-        system="You are the Agile Delivery Lead. Output a JSON list of tasks, assigning each to a target_realm (e.g., vindicta-engine).",
-        prompt=plan,
-    )
-    tasks_json = task.execute_json(provider=provider)
-    return {"tasks": tasks_json, "current_phase": "review"}
+PLANNING_AGENTS: Dict[str, AgentConfig] = {
+    "PO": {
+        "task_name": "Spec Creation",
+        "system_prompt": "You are the Product Owner. Your goal is to translate user intent into a clear, functional specification.",
+        "input_key": "intent",
+        "output_key": "spec_content",
+        "prompt_template": "Write a detailed functional specification for the following user intent:\n\n{input}",
+        "phase_update": "planning",
+        "json_mode": False
+    },
+    "Architect": {
+        "task_name": "Plan Creation",
+        "system_prompt": "You are the System Architect. Your goal is to design a technical implementation plan based on functional specifications.",
+        "input_key": "spec_content",
+        "output_key": "plan_content",
+        "prompt_template": "Draft a technical implementation plan based on this spec:\n\n{input}",
+        "json_mode": False
+    },
+    "ADL": {
+        "task_name": "Task Slicing",
+        "system_prompt": "You are the Agile Delivery Lead. Your goal is to break down technical plans into discrete, actionable tasks assigned to specific domains.",
+        "input_key": "plan_content",
+        "output_key": "tasks",
+        "prompt_template": "Based on the plan below, output a JSON list of tasks. Each task must have an 'id', 'description', 'target_realm' (e.g., vindicta-engine), and 'status' ('pending').\n\nPlan:\n{input}",
+        "phase_update": "review",
+        "json_mode": True
+    }
+}
 
 
-def build_meta_graph():
+# --- Generic Planning Node Factory ---
+
+def make_planning_node(agent_id: str) -> Callable[[VindictaState, RunnableConfig], Dict[str, Any]]:
+    """
+    Creates a LangGraph node function for a specific planning agent.
+
+    Args:
+        agent_id: The key of the agent in PLANNING_AGENTS (e.g., 'PO', 'ADL').
+
+    Returns:
+        Callable: A function matching the Node signature (state, config) -> dict.
+    """
+    config_data = PLANNING_AGENTS.get(agent_id)
+    if not config_data:
+        raise ValueError(f"Unknown agent_id: {agent_id}")
+
+    task_name = config_data["task_name"]
+    system_prompt = config_data["system_prompt"]
+    input_key = config_data["input_key"]
+    output_key = config_data["output_key"]
+    prompt_template = config_data["prompt_template"]
+    phase_update = config_data.get("phase_update")
+    json_mode = config_data.get("json_mode", False)
+
+    def planning_node(state: VindictaState, config: RunnableConfig) -> Dict[str, Any]:
+        configurable = config.get("configurable", {})
+        provider = configurable.get("llm_provider", MockLLMProvider())
+
+        input_value = state.get(input_key, "")  # type: ignore
+        
+        task = AITask(
+            name=task_name,
+            system=system_prompt,
+            prompt=prompt_template.format(input=input_value),
+        )
+
+        updates: Dict[str, Any] = {}
+        
+        if json_mode:
+            result_json = task.execute_json(provider=provider)
+            updates[output_key] = result_json
+        else:
+            result_text = task.execute(provider=provider)
+            updates[output_key] = result_text
+
+        if phase_update:
+            updates["current_phase"] = phase_update
+
+        return updates
+
+    # Set metadata
+    planning_node.__name__ = f"{agent_id.lower()}_node"
+    return planning_node
+
+
+# --- Graph Construction ---
+
+def build_meta_graph() -> Any:
+    """
+    Constructs and compiles the StateGraph for the planning layer.
+
+    Returns:
+        CompiledStateGraph: The executable LangGraph.
+    """
     meta_builder = StateGraph(VindictaState)
-    meta_builder.add_node("PO", product_owner_node)
-    meta_builder.add_node("Architect", architect_node)
-    meta_builder.add_node("ADL", adl_node)
 
+    # 1. Add Nodes
+    nodes = ["PO", "Architect", "ADL"]
+    for agent_id in nodes:
+        meta_builder.add_node(agent_id, make_planning_node(agent_id))
+
+    # 2. Add Edges (Linear Flow)
     meta_builder.set_entry_point("PO")
     meta_builder.add_edge("PO", "Architect")
     meta_builder.add_edge("Architect", "ADL")
