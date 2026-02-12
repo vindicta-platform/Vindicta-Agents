@@ -18,9 +18,9 @@ dependencies = [
     "langchain-core",
     "langgraph-cli[inmem]>=0.4.12",
     "langgraph-checkpoint-sqlite>=3.0.3",
-    "aiosqlite>=0.22.1",
     "structlog>=25.5.0",
     "websockets>=16.0",
+    "chainlit>=1.0.0",
 ]
 
 [project.optional-dependencies]
