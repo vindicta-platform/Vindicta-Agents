@@ -30,6 +30,23 @@ Essential commands and patterns for SDD.
 
 ---
 
+## Swarm Delegation
+
+See [How to Delegate](how-to-delegate.md) for details.
+
+| Realm Key          | Agent          | Repo              |
+| ------------------ | -------------- | ----------------- |
+| `vindicta-engine`  | TechPriest     | Engine (Py)       |
+| `warscribe-system` | LogosHistorian | WarScribe (Py)    |
+| `vindicta-economy` | VoidBanker     | Economy (Py)      |
+| `primordia-ai`     | SeersOracle    | Primordia (Py)    |
+| `meta-oracle`      | DebateMaster   | Meta-Oracle (Py)  |
+| `logi-slate-ui`    | ForgeSmith     | UI Kit (TS)       |
+| `vindicta-portal`  | PortalArchon   | Portal (JS)       |
+| `vindicta-api`     | GateKnight     | API (Py)          |
+
+---
+
 ## Commit Prefixes
 
 | Prefix      | Usage                        |
