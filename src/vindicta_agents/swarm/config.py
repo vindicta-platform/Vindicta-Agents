@@ -1,6 +1,20 @@
+"""Swarm Configuration & Dependency Injection.
+
+Defines the configurable dependencies injected into LangGraph nodes
+via ``RunnableConfig["configurable"]``.
+
+Usage::
+
+    vindicta_swarm.invoke(state, config={"configurable": {
+        "llm_provider": OllamaLLMProvider(),
+        "tools": tool_registry,
+        "github_client": GitHubClient(),
+        "supervisor": my_supervisor,
+    }})
 """
-Configuration for the Swarm Module.
-"""
+
+from __future__ import annotations
+
 import json
 import os
 import urllib.request
@@ -10,13 +24,25 @@ from typing import Any, Protocol, TypedDict, runtime_checkable, List, Dict
 from ..utils.logger import logger
 from ..tools import git_tools
 
+
 @runtime_checkable
 class LLMProvider(Protocol):
     def execute(self, system: str | None, prompt: str) -> str: ...
     def execute_json(self, system: str | None, prompt: str) -> list[dict]: ...
 
-class SwarmConfig(TypedDict):
+
+class SwarmConfig(TypedDict, total=False):
+    """Configurable dependencies passed via RunnableConfig["configurable"]."""
+
+    llm_provider: Any       # LLMProvider protocol (Ollama or Mock)
+    supervisor: Any         # AxiomaticSupervisor instance
+    nexus_client: Any       # Optional NexusClient for reporting
+    tools: Any              # ToolRegistry instance
+    github_client: Any      # GitHubClient instance
+    github_token: str       # Shared GITHUB_TOKEN (fallback for GitHubClient)
+    workspace_root: str     # Absolute path to the workspace for file/git ops
     domain_map: dict[str, str]
+
 
 class MockLLMProvider:
     def execute(self, system: str | None, prompt: str) -> str:
@@ -24,6 +50,7 @@ class MockLLMProvider:
 
     def execute_json(self, system: str | None, prompt: str) -> list[dict]:
         return [{"id": "mock-task-1", "description": "Mock Task", "status": "pending"}]
+
 
 class OllamaLLMProvider:
     def __init__(self, base_url: str = "http://localhost:11434", model: str = "llama3"):
@@ -141,9 +168,6 @@ class ShowcaseProvider:
             return f"Failed: {str(e)}"
 
     def _write_health_code(self, realm: str, repo_path: str):
-        # Determine stack based on simple heuristics or domain registry hints
-        # For simplicity in showcase, we look for package.json vs pyproject.toml
-        
         is_node = os.path.exists(os.path.join(repo_path, "package.json"))
         
         if is_node:
@@ -155,16 +179,12 @@ class ShowcaseProvider:
             )
             git_tools.write_file(repo_path, "src/health.js", content)
         else:
-            # Python
-            # Try to find the package directory
             pkg_name = realm.replace("-", "_").lower()
             if realm == "Primordia-AI": pkg_name = "primordia"
             if realm == "Meta-Oracle": pkg_name = "meta_oracle"
             
-            # Check standard src/<pkg>/ location
             target_file = f"src/{pkg_name}/health.py"
             
-            # Fallback if src structure differs
             if not os.path.exists(os.path.join(repo_path, "src")):
                 target_file = "health.py"
             
