@@ -47,5 +47,5 @@ Coverage Mandate: ≥90%
 
 ## Docs
 
-- [SDK Reference](docs/sdk.md)
+- [Architecture & Standards](https://github.com/vindicta-platform/vindicta-foundation)
 - [Workflow Guide](docs/index.md)
