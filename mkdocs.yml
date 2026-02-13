@@ -1,10 +1,10 @@
 site_name: Vindicta Agents
 site_description: Agent SDKs and autonomous workflows for the Vindicta Platform.
 site_author: Vindicta Platform Contributors
-site_url: https://vindicta-platform.github.io/vindicta-agents/
+site_url: https://vindicta-platform.github.io/Vindicta-Agents/
 
-repo_name: vindicta-platform/vindicta-agents
-repo_url: https://github.com/vindicta-platform/vindicta-agents
+repo_name: vindicta-platform/Vindicta-Agents
+repo_url: https://github.com/vindicta-platform/Vindicta-Agents
 
 theme:
   name: material
