@@ -32,7 +32,7 @@ def build_master_graph(interrupt: bool = True):
     compile_kwargs = {"checkpointer": memory}
     if interrupt:
         compile_kwargs["interrupt_before"] = ["ExecutionPhase"]
-        
+
     return master_builder.compile(**compile_kwargs)
 
 # Export the compiled swarm instance with default behavior

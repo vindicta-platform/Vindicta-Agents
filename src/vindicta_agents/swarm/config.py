@@ -19,7 +19,7 @@ import json
 import os
 import urllib.request
 import uuid
-from typing import Any, Protocol, TypedDict, runtime_checkable, List, Dict
+from typing import Any, Protocol, TypedDict, runtime_checkable
 
 from ..utils.logger import logger
 from ..tools import git_tools
@@ -69,7 +69,7 @@ class OllamaLLMProvider:
 
         try:
             req = urllib.request.Request(
-                url, 
+                url,
                 data=json.dumps(payload).encode('utf-8'),
                 headers={'Content-Type': 'application/json'}
             )
@@ -105,7 +105,7 @@ class ShowcaseProvider:
                 "To improve observability, all domains must expose a standardized health check endpoint.\n"
                 "**Requirement**: Add a file that indicates service health and realm identity.\n"
             )
-        
+
         # Architect
         if "Architect" in (system or ""):
             return (
@@ -114,7 +114,7 @@ class ShowcaseProvider:
                 "- Python: `src/<package>/health.py` with `check_health()` function.\n"
                 "- Node: `src/health.js` exporting `checkHealth()` function.\n"
             )
-            
+
         return "I accept this task."
 
     def execute_json(self, system: str | None, prompt: str) -> list[dict]:
@@ -135,24 +135,24 @@ class ShowcaseProvider:
         Executes the actual git operations for the given realm.
         """
         logger.info(f"ShowcaseExecutor: Processing {realm} in {repo_path}")
-        
+
         try:
             # 1. Checkout Branch
             git_tools.checkout_new_branch(repo_path, self.branch_name)
-            
+
             # 2. Add Code
             self._write_health_code(realm, repo_path)
-            
+
             # 3. Commit
             git_tools.commit_files(
-                repo_path, 
+                repo_path,
                 "feat: add standardized health check endpoint",
                 author_email="260104759+vindicta-bot@users.noreply.github.com"
             )
-            
+
             # 4. Push
             git_tools.push_branch(repo_path, self.branch_name)
-            
+
             # 5. Create PR
             pr_url = git_tools.create_pr(
                 repo_path,
@@ -160,16 +160,16 @@ class ShowcaseProvider:
                 body=f"Automated PR by Vindicta Swarm.\n\nAdds health check for realm: `{realm}`.",
                 reviewer="brandon-fox"
             )
-            
+
             return f"PR Created: {pr_url}"
-            
+
         except Exception as e:
             logger.error("showcase_execution_failed", realm=realm, error=str(e))
             return f"Failed: {str(e)}"
 
     def _write_health_code(self, realm: str, repo_path: str):
         is_node = os.path.exists(os.path.join(repo_path, "package.json"))
-        
+
         if is_node:
             content = (
                 "/**\n * Health Check Module\n */\n"
@@ -180,14 +180,16 @@ class ShowcaseProvider:
             git_tools.write_file(repo_path, "src/health.js", content)
         else:
             pkg_name = realm.replace("-", "_").lower()
-            if realm == "Primordia-AI": pkg_name = "primordia"
-            if realm == "Meta-Oracle": pkg_name = "meta_oracle"
-            
+            if realm == "Primordia-AI":
+                pkg_name = "primordia"
+            if realm == "Meta-Oracle":
+                pkg_name = "meta_oracle"
+
             target_file = f"src/{pkg_name}/health.py"
-            
+
             if not os.path.exists(os.path.join(repo_path, "src")):
                 target_file = "health.py"
-            
+
             content = (
                 "import time\n\n"
                 "def check_health() -> dict:\n"

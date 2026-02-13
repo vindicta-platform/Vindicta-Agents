@@ -18,43 +18,43 @@ mock_config = {'configurable': {'llm_provider': <vindicta_agents.swarm.config.Mo
 
     def test_full_pipeline(self, initial_state, mock_config):
         state = initial_state
-    
+
         # 1. SM Boot
         result = sm_node(state, mock_config)
         state.update(result)
         assert state["sdd_stage"] == "specify"
-    
+
         # 2. PO generates spec
         result = product_owner_node(state, mock_config)
         state.update(result)
         assert state["spec_content"] is not None
         assert state["sdd_stage"] == "specify"
-    
+
         # 3. Architect creates plan
         result = architect_node(state, mock_config)
         state.update(result)
         assert state["plan_content"] is not None
         assert state["sdd_stage"] == "plan"
-    
+
         # 4. ADL generates tasks
         result = adl_node(state, mock_config)
         state.update(result)
         assert len(state["tasks"]) > 0
         assert state["sdd_stage"] == "tasks"
-    
+
         # 5. SD delegates
         result = sd_node(state, mock_config)
         state.update(result)
         assert state["sdd_stage"] == "implement"
-    
+
         # 6. Domain agent (TechPriest for vindicta-engine tasks)
         result = tech_priest_node(state, mock_config)
         state.update(result)
-    
+
         # 7. SD Review
         result = sd_review_node(state, mock_config)
         state.update(result)
         assert state["sdd_stage"] == "verify"
-    
+
         # 8. SSE (no GitHub client \u2192 no PR created)
         result = sse_node(state, mock_config)

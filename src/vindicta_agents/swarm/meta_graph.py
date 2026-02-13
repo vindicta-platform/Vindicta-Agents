@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import json
 import pathlib
-from typing import Any, Dict, List, Optional, TypedDict, Callable
+from typing import Any, Dict, Optional, TypedDict, Callable
 
 from langchain_core.runnables import RunnableConfig
 from langgraph.graph import END, StateGraph
@@ -21,7 +21,7 @@ from vindicta_agents.sdk.models import AITask
 
 from .config import MockLLMProvider
 from .prompts import ADL_SYSTEM, ARCHITECT_SYSTEM, PO_SYSTEM
-from .spec_queue import DeclineMemory, SpecQueue
+from .spec_queue import DeclineMemory
 from .state import VindictaState
 
 
@@ -170,7 +170,7 @@ def make_planning_node(agent_id: str) -> Callable[[VindictaState, RunnableConfig
         provider = configurable.get("llm_provider", MockLLMProvider())
 
         input_value = state.get(input_key, "")  # type: ignore
-        
+
         task = AITask(
             name=task_name,
             system=system_prompt,
@@ -178,7 +178,7 @@ def make_planning_node(agent_id: str) -> Callable[[VindictaState, RunnableConfig
         )
 
         updates: Dict[str, Any] = {}
-        
+
         if json_mode:
             result_json = task.execute_json(provider=provider)
             updates[output_key] = result_json

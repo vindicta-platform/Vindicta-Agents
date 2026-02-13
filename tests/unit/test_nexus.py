@@ -15,7 +15,7 @@ def test_websocket_connection():
             "payload": {}
         }
         websocket.send_text(json.dumps(envelope))
-        
+
         # Expect ACK
         data = websocket.receive_text()
         response = json.loads(data)
@@ -26,7 +26,7 @@ def test_malformed_envelope():
     with client.websocket_connect("/ws/test-agent") as websocket:
         # Send invalid JSON
         websocket.send_text("not json")
-        
+
         data = websocket.receive_text()
         response = json.loads(data)
         assert "error" in response

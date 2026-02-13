@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List, Optional
+from typing import List
 from datetime import datetime
 
 class GPUState(BaseModel):
@@ -26,7 +26,7 @@ class HardwareState(BaseModel):
     cpu: CPUState
     memory: MemoryState
     gpus: List[GPUState] = Field(default_factory=list)
-    
+
 class ResourceUsage(BaseModel):
     """
     Standardized resource usage metrics for an agent or task.

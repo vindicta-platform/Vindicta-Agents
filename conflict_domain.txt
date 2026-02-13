@@ -30,21 +30,21 @@ index 298b351,a5c2ddd..0000000
  +from ..utils.logger import logger
 ++=======
 + """Domain graph: SD ΓåÆ Domain Agents ΓåÆ SD Review ΓåÆ SSE pipeline.
-  
+
 + The SD node delegates tasks by realm, domain agents generate code,
 + and the SD Review + SSE nodes perform code review.
 + """
-+ 
++
 + from __future__ import annotations
-+ 
++
 + import uuid
 ++>>>>>>> a48e51a (feat: implement autonomous swarm workflow (Phases 1-5))
-+ 
++
 + from langchain_core.runnables import RunnableConfig
 + from langgraph.graph import END, StateGraph
-+ 
++
 + from vindicta_agents.sdk.models import AITask
-+ 
++
 + from ..utils.logger import logger
 + from .config import MockLLMProvider
 + from .prompts import (
@@ -55,37 +55,37 @@ index 298b351,a5c2ddd..0000000
 +     SSE_SYSTEM,
 + )
 + from .state import VindictaState
-+ 
-+ 
++
++
 + # ΓöÇΓöÇ helpers ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
-+ 
++
 + def _provider(config: RunnableConfig):
 +     return config.get("configurable", {}).get("llm_provider", MockLLMProvider())
-+ 
-+ 
++
++
 + # ΓöÇΓöÇ SD node (delegation + routing) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
-+ 
++
 + def sd_node(state: VindictaState, config: RunnableConfig):
 +     """Review task list and prepare delegation to domain agents."""
 +     provider = _provider(config)
 +     tasks = state.get("tasks", [])
-+ 
++
 +     task = AITask(
 +         name="Task Delegation Review",
 +         system=SD_SYSTEM,
 +         prompt=f"Review and delegate these tasks:\n{tasks}",
 +     )
 +     task.execute(provider=provider)  # SD reviews ΓÇö output logged but not stored
-+ 
++
 +     return {
 +         "current_phase": "execution",
 +         "sdd_stage": "implement",
 +         "execution_log": [f"SD: delegated {len(tasks)} tasks to domain agents"],
 +     }
-+ 
-+ 
++
++
 + # ΓöÇΓöÇ Domain Agent Implementations ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
-+ 
++
 + def _domain_agent_node(realm: str, state: VindictaState, config: RunnableConfig):
 +     """Generic domain agent: generates code for tasks matching *realm*."""
 +     provider = _provider(config)
@@ -93,11 +93,11 @@ index 298b351,a5c2ddd..0000000
 +     supervisor = configurable.get("supervisor")
 +     agent_name = REALM_TO_AGENT.get(realm, realm)
 +     system_prompt = REALM_TO_SYSTEM_PROMPT.get(realm, f"You are a developer for {realm}.")
-+ 
++
 +     tasks = state.get("tasks", [])
 +     completed = []
 +     log_entries = []
-+ 
++
 +     for t in tasks:
 +         if t.get("target_realm") == realm and t.get("status") == "pending":
 +             task = AITask(
@@ -112,70 +112,70 @@ index 298b351,a5c2ddd..0000000
 +                 "code_diff": code_diff,
 +             })
 +             log_entries.append(f"{agent_name}: completed '{t.get('id', '?')}'")
-+ 
++
 +     delta = {"execution_log": log_entries or [f"{agent_name} activated"]}
-+ 
++
 +     if supervisor:
 +         trace_id = str(uuid.uuid4())
 +         supervisor.verify_state_transition(trace_id, delta)
-+ 
++
 +     return delta
-+ 
-+ 
++
++
 + def tech_priest_node(state: VindictaState, config: RunnableConfig):
 +     return _domain_agent_node("vindicta-engine", state, config)
-+ 
-+ 
++
++
 + def logos_historian_node(state: VindictaState, config: RunnableConfig):
 +     return _domain_agent_node("warscribe-system", state, config)
-+ 
-+ 
++
++
 + def void_banker_node(state: VindictaState, config: RunnableConfig):
 +     return _domain_agent_node("vindicta-economy", state, config)
-+ 
-+ 
++
++
 + # ΓöÇΓöÇ SD Review node ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
-+ 
++
 + def sd_review_node(state: VindictaState, config: RunnableConfig):
 +     """Review code diffs from domain agents for quality."""
 +     provider = _provider(config)
 +     tasks = state.get("tasks", [])
 +     diffs = [t.get("code_diff", "") for t in tasks if t.get("code_diff")]
-+ 
++
 +     task = AITask(
 +         name="SD Code Review",
 +         system=SD_REVIEW_SYSTEM,
 +         prompt=f"Review these code diffs:\n\n{'---'.join(diffs)}",
 +     )
 +     review_result = task.execute(provider=provider)
-+ 
++
 +     approved = "APPROVE" in review_result.upper()
 +     status = "approved" if approved else "changes_requested"
-+ 
++
 +     return {
 +         "sdd_stage": "verify",
 +         "execution_log": [f"SD_Review: {status}"],
 +     }
-+ 
-+ 
++
++
 + # ΓöÇΓöÇ SSE node ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
-+ 
++
 + def sse_node(state: VindictaState, config: RunnableConfig):
 +     """Final review + PR creation."""
 +     provider = _provider(config)
 +     configurable = config.get("configurable", {})
 +     github_client = configurable.get("github_client")
-+ 
++
 +     tasks = state.get("tasks", [])
 +     diffs = [t.get("code_diff", "") for t in tasks if t.get("code_diff")]
-+ 
++
 +     task = AITask(
 +         name="SSE Final Review",
 +         system=SSE_SYSTEM,
 +         prompt=f"Final review of all diffs:\n\n{'---'.join(diffs)}",
 +     )
 +     review_result = task.execute(provider=provider)
-+ 
++
 +     pr_url = None
 +     if github_client and "APPROVE" in review_result.upper():
 +         try:
@@ -192,16 +192,16 @@ index 298b351,a5c2ddd..0000000
 +                 "error_log": f"SSE: PR creation failed: {e}",
 +                 "execution_log": ["SSE: review passed, PR creation failed"],
 +             }
-+ 
++
 +     return {
 +         "pr_url": pr_url,
 +         "sdd_stage": "merge" if pr_url else "verify",
 +         "execution_log": [f"SSE: PR created ({pr_url})" if pr_url else "SSE: review complete"],
 +     }
-+ 
-+ 
++
++
 + # ΓöÇΓöÇ SM nodes ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
-+ 
++
 + def sm_node(state: VindictaState, config: RunnableConfig):
 +     """Boot the swarm: set initial stage and priorities."""
 +     return {
@@ -209,14 +209,14 @@ index 298b351,a5c2ddd..0000000
 +         "current_phase": "planning",
 +         "execution_log": ["SM: swarm booted, SDD pipeline initiated"],
 +     }
-+ 
-+ 
++
++
 + def sm_merge_node(state: VindictaState, config: RunnableConfig):
 +     """Merge the approved PR and close the SDD cycle."""
 +     configurable = config.get("configurable", {})
 +     github_client = configurable.get("github_client")
 +     pr_url = state.get("pr_url")
-+ 
++
 +     if github_client and pr_url:
 +         try:
 +             github_client.merge_pr(pr_url)
@@ -226,16 +226,16 @@ index 298b351,a5c2ddd..0000000
 +                 "error_log": f"SM: merge failed: {e}",
 +                 "execution_log": ["SM: merge failed"],
 +             }
-+ 
++
 +     return {
 +         "sdd_stage": "done",
 +         "current_phase": "done",
 +         "execution_log": ["SM: PR merged, SDD cycle complete"],
 +     }
-+ 
-+ 
++
++
 + # ΓöÇΓöÇ Router ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
-  
+
  -def setup_execution_node(state: VindictaState):
  +class IntegrityCheckResult(TypedDict, total=False):
  +    """Result structure for an integrity check operation."""
@@ -332,7 +332,7 @@ index 298b351,a5c2ddd..0000000
  +        provider = configurable.get("llm_provider")  # Expecting ShowcaseProvider here if set
  +
  +        logger.info(f"{node_name.lower()}_activated", realm=realm)
- +        
+ +
  +        execution_log = [f"{node_name} activated"]
  +
  +        # Showcase / Auto-Execution Logic
@@ -342,7 +342,7 @@ index 298b351,a5c2ddd..0000000
  +                domain_info = DOMAIN_REGISTRY.get(realm)
  +                if domain_info:
  +                    repo_path = os.path.join(platform_root, domain_info["repo_name"])
- +                    
+ +
  +                    # Execute the task via the provider's logic
  +                    result = provider.execute_domain_task(realm, repo_path)
  +                    execution_log.append(f"Task result: {result}")
@@ -351,13 +351,13 @@ index 298b351,a5c2ddd..0000000
  +                execution_log.append(f"Execution Error: {str(e)}")
  +
  +        delta = {"execution_log": execution_log}
- +        
+ +
  +        if supervisor:
  +            trace_id = str(uuid.uuid4())
  +            supervisor.verify_state_transition(trace_id, delta)
- +            
+ +
  +        return delta
- +    
+ +
  +    domain_node.__name__ = f"{node_name.lower()}_node"
  +    return domain_node
  +
@@ -365,8 +365,8 @@ index 298b351,a5c2ddd..0000000
  +def setup_execution_node(state: VindictaState) -> Dict[str, Any]:
       logger.info("execution_phase_initializing")
       return {"current_phase": "execution"}
-  
-  
+
+
 ++<<<<<<< HEAD
  +# --- The Router ---
  +
@@ -379,15 +379,15 @@ index 298b351,a5c2ddd..0000000
           t["target_realm"] for t in tasks if t.get("status") == "pending"
 @@@ -175,40 -231,38 +386,72 @@@
       return routes
-  
-  
+
+
 ++<<<<<<< HEAD
  +# --- Graph Construction ---
  +
  +def build_domain_graph() -> Any:
  +    domain_builder = StateGraph(VindictaState)
  +    domain_builder.add_node("SetupExecution", setup_execution_node)
- +    
+ +
  +    node_names = []
  +    for realm, info in DOMAIN_REGISTRY.items():
  +        node_name = info["node_name"]
@@ -405,10 +405,10 @@ index 298b351,a5c2ddd..0000000
  +    domain_builder.add_conditional_edges("SetupExecution", task_router, route_map)
 ++=======
 + # ΓöÇΓöÇ Graph builder ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
-+ 
++
 + def build_domain_graph():
 +     builder = StateGraph(VindictaState)
-+ 
++
 +     builder.add_node("SD", sd_node)
 +     builder.add_node("SetupExecution", setup_execution_node)
 +     builder.add_node("TechPriest", tech_priest_node)
@@ -416,7 +416,7 @@ index 298b351,a5c2ddd..0000000
 +     builder.add_node("VoidBanker", void_banker_node)
 +     builder.add_node("SD_Review", sd_review_node)
 +     builder.add_node("SSE", sse_node)
-+ 
++
 +     builder.set_entry_point("SD")
 +     builder.add_edge("SD", "SetupExecution")
 +     builder.add_conditional_edges(
@@ -435,11 +435,11 @@ index 298b351,a5c2ddd..0000000
 +     builder.add_edge("SD_Review", "SSE")
 +     builder.add_edge("SSE", END)
 ++>>>>>>> a48e51a (feat: implement autonomous swarm workflow (Phases 1-5))
-  
+
 -     return domain_builder.compile()
 +     return builder.compile()
-  
-  
+
+
 - # Export instance
   domain_graph = build_domain_graph()
  +

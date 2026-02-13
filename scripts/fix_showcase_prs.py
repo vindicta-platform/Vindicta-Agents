@@ -28,24 +28,24 @@ def get_platform_root() -> str:
 
 def main():
     print("🧹 Cleaning up Swarm PRs (Removing ignored files)")
-    
+
     platform_root = get_platform_root()
-    
+
     # Get active PRs
     # We look for PRs with title "feat: Standardized Health Check"
-    # across the repos. 
+    # across the repos.
     # Actually, we can just iterate domains and check active branch or query gh.
-    
+
     for realm, info in DOMAIN_REGISTRY.items():
         repo_name = info["repo_name"]
         repo_path = os.path.join(platform_root, repo_name)
-        
+
         if not os.path.exists(repo_path):
             print(f"Skipping {repo_name} (not found)")
             continue
-            
+
         print(f"\nProcessing {repo_name}...")
-        
+
         # 1. Find the PR branch
         # We assume local branch is still there from run_showcase.py execution
         # Or we can grep `git branch`
@@ -53,26 +53,26 @@ def main():
         if not branches:
             print("  No health-check branch found.")
             continue
-            
+
         # Take the first one (should be only one)
         branch = branches.splitlines()[0].strip().replace("* ", "")
         print(f"  Found branch: {branch}")
-        
+
         # Checkout
         run_cmd(["git", "checkout", branch], cwd=repo_path)
-        
+
         # 2. Add .gitignore if missing
         ensure_gitignore(repo_path, info.get("package_name", "python")) # heuristic
-        
+
         # 3. Force Clean Index (The only way to be sure)
         print("  Purging index to respect .gitignore...")
-        
+
         # Remove everything from index (files stay on disk)
         run_cmd(["git", "rm", "-r", "--cached", "."], cwd=repo_path)
-        
+
         # Re-add everything (respecting the new .gitignore)
         run_cmd(["git", "add", "."], cwd=repo_path)
-        
+
         # 4. Commit and Push
         status = run_cmd(["git", "status", "--porcelain"], cwd=repo_path)
         if status:
@@ -85,7 +85,7 @@ def main():
 
 def ensure_gitignore(repo_path: str, tech_hint: str):
     gitignore_path = os.path.join(repo_path, ".gitignore")
-    
+
     defaults = [
         "__pycache__/",
         "*.pyc",
@@ -97,7 +97,7 @@ def ensure_gitignore(repo_path: str, tech_hint: str):
         "dist/",
         "build/"
     ]
-    
+
     if not os.path.exists(gitignore_path):
         print("  Creating .gitignore")
         with open(gitignore_path, "w") as f:
@@ -107,7 +107,7 @@ def ensure_gitignore(repo_path: str, tech_hint: str):
         # For showcase, simple append is safe
         with open(gitignore_path, "r") as f:
             content = f.read()
-        
+
         missing = [item for item in defaults if item not in content]
         if missing:
             print(f"  Updating .gitignore with {len(missing)} rules")

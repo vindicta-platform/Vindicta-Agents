@@ -86,7 +86,7 @@ class GitHubClient:
         gh_repo = self._get_repo(repo)
         issues = gh_repo.get_issues(
             state=state,
-            labels=[gh_repo.get_label(l) for l in labels] if labels else [],
+            labels=[gh_repo.get_label(lbl) for lbl in labels] if labels else [],
         )
         return [
             IssueResult(number=i.number, title=i.title, url=i.html_url)

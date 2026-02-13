@@ -13,7 +13,6 @@ LangGraph interrupt points, providing:
 
 from __future__ import annotations
 
-import os
 
 try:
     import chainlit as cl

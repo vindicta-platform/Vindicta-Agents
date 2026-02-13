@@ -47,4 +47,3 @@ Unmerged paths:
 	both modified:   src/vindicta_agents/swarm/domain_graph.py
 	both modified:   src/vindicta_agents/swarm/meta_graph.py
 	both added:      src/vindicta_agents/tools/__init__.py
-

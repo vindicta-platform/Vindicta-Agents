@@ -3,7 +3,6 @@ import json
 import uuid
 from datetime import datetime
 from typing import Any, Dict, Optional
-import os
 import structlog
 
 # Initialize structlog
@@ -33,7 +32,7 @@ class FlightRecorder:
         """Initialize the SQLite database schema."""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
-        
+
         # Create events table
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS flight_log (
@@ -45,7 +44,7 @@ class FlightRecorder:
                 details JSON
             )
         ''')
-        
+
         conn.commit()
         conn.close()
 
@@ -55,18 +54,18 @@ class FlightRecorder:
         """
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
-        
+
         event_id = str(uuid.uuid4())
         timestamp = datetime.utcnow().isoformat()
-        
+
         cursor.execute(
             'INSERT INTO flight_log (id, timestamp, trace_id, component, event_type, details) VALUES (?, ?, ?, ?, ?, ?)',
             (event_id, timestamp, trace_id, component, event_type, json.dumps(details))
         )
-        
+
         conn.commit()
         conn.close()
-        
+
         # Use structlog instead of print
         logger.info(
             f"{event_type}",
@@ -82,12 +81,12 @@ class FlightRecorder:
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
-        
+
         if trace_id:
              cursor.execute('SELECT * FROM flight_log WHERE trace_id = ? ORDER BY timestamp DESC', (trace_id,))
         else:
             cursor.execute('SELECT * FROM flight_log ORDER BY timestamp DESC LIMIT 100')
-            
+
         rows = [dict(row) for row in cursor.fetchall()]
         conn.close()
         return rows

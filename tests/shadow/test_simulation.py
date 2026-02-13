@@ -10,10 +10,10 @@ async def test_shadow_boundary_violation():
     """
     nexus = ShadowNexus()
     report = await nexus.run_scenario(SCENARIO_BOUNDARY_VIOLATION)
-    
+
     assert report["scenario"] == "Boundary Violation Test"
     assert report["passed"] is True, f"Scenario Failed: {report['steps']}"
-    
+
     # Optional: Verify detailed steps
     steps = report["steps"]
     assert len(steps) == 3

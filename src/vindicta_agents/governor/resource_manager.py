@@ -1,8 +1,5 @@
-import asyncio
-from typing import Dict, List, Optional
-from datetime import datetime
+from typing import Dict
 from ..telemetry.monitor import HardwareMonitor
-from ..telemetry.models import HardwareState
 from .models import PriorityLevel, ComputeQuota, ThrottlingDecision
 from ..utils.logger import logger
 
@@ -17,7 +14,7 @@ class ResourceGovernor:
         self.max_memory_percent = 85.0
         self.max_gpu_memory_percent = 90.0
         self.max_gpu_temp_c = 80.0
-        
+
         # State
         self.active_tasks: Dict[str, ComputeQuota] = {}
 

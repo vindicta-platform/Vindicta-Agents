@@ -9,10 +9,8 @@ and the registry-driven router used by the Showcase flow.
 
 from __future__ import annotations
 
-import functools
 import json
 import os
-import pathlib
 import subprocess
 import uuid
 from typing import Any, Dict, List, Optional, TypedDict, Union, Callable
@@ -305,7 +303,7 @@ def make_domain_node(realm: str) -> Callable[[VindictaState, RunnableConfig], Di
         provider = configurable.get("llm_provider")
 
         logger.info(f"{node_name.lower()}_activated", realm=realm)
-        
+
         execution_log = [f"{node_name} activated"]
 
         # Showcase / Auto-Execution Logic
@@ -322,13 +320,13 @@ def make_domain_node(realm: str) -> Callable[[VindictaState, RunnableConfig], Di
                 execution_log.append(f"Execution Error: {str(e)}")
 
         delta = {"execution_log": execution_log}
-        
+
         if supervisor:
             trace_id = str(uuid.uuid4())
             supervisor.verify_state_transition(trace_id, delta)
-            
+
         return delta
-    
+
     domain_node.__name__ = f"{node_name.lower()}_node"
     return domain_node
 

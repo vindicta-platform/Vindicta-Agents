@@ -8,12 +8,12 @@ index a3a6171,f2275a1..0000000
  +Configuration for the Swarm Module.
 ++=======
 + """Swarm Configuration & Dependency Injection.
-+ 
++
 + Defines the configurable dependencies injected into LangGraph nodes
 + via ``RunnableConfig["configurable"]``.
-+ 
++
 + Usage::
-+ 
++
 +     vindicta_swarm.invoke(state, config={"configurable": {
 +         "llm_provider": OllamaLLMProvider(),
 +         "tools": tool_registry,
@@ -34,11 +34,11 @@ index a3a6171,f2275a1..0000000
  +from ..tools import git_tools
 ++=======
 + from __future__ import annotations
-+ 
++
 + from typing import Any, Protocol, TypedDict, runtime_checkable
-+ 
++
 ++>>>>>>> a48e51a (feat: implement autonomous swarm workflow (Phases 1-5))
-  
+
   @runtime_checkable
   class LLMProvider(Protocol):
  -    """Protocol for LLM execution backends."""
@@ -46,10 +46,10 @@ index a3a6171,f2275a1..0000000
       def execute(self, system: str | None, prompt: str) -> str: ...
  -
       def execute_json(self, system: str | None, prompt: str) -> list[dict]: ...
-  
+
  +class SwarmConfig(TypedDict):
  +    domain_map: dict[str, str]
-  
+
   class MockLLMProvider:
  -    """Default mock implementation for development and testing."""
  +    def execute(self, system: str | None, prompt: str) -> str:
@@ -75,7 +75,7 @@ index a3a6171,f2275a1..0000000
  +
  +        try:
  +            req = urllib.request.Request(
- +                url, 
+ +                url,
  +                data=json.dumps(payload).encode('utf-8'),
  +                headers={'Content-Type': 'application/json'}
  +            )
@@ -102,7 +102,7 @@ index a3a6171,f2275a1..0000000
  +    """
  +    def __init__(self):
  +        self.branch_name = f"feat/health-check-{uuid.uuid4().hex[:8]}"
-  
+
       def execute(self, system: str | None, prompt: str) -> str:
  -        return f"[MOCKED EXECUTION] System: {system} | User: {prompt}"
  +        # Product Owner
@@ -112,7 +112,7 @@ index a3a6171,f2275a1..0000000
  +                "To improve observability, all domains must expose a standardized health check endpoint.\n"
  +                "**Requirement**: Add a file that indicates service health and realm identity.\n"
  +            )
- +        
+ +
  +        # Architect
  +        if "Architect" in (system or ""):
  +            return (
@@ -121,9 +121,9 @@ index a3a6171,f2275a1..0000000
  +                "- Python: `src/<package>/health.py` with `check_health()` function.\n"
  +                "- Node: `src/health.js` exporting `checkHealth()` function.\n"
  +            )
- +            
+ +
  +        return "I accept this task."
-  
+
       def execute_json(self, system: str | None, prompt: str) -> list[dict]:
  +        # ADL - Validates prompt to ensure we are in the right context
           return [
@@ -154,31 +154,31 @@ index a3a6171,f2275a1..0000000
  +            {"id": "7", "description": "Implement health check", "target_realm": "vindicta-portal", "status": "pending"},
  +            {"id": "8", "description": "Implement health check", "target_realm": "vindicta-api", "status": "pending"},
           ]
-  
+
  -
  +    def execute_domain_task(self, realm: str, repo_path: str) -> str:
  +        """
  +        Executes the actual git operations for the given realm.
  +        """
  +        logger.info(f"ShowcaseExecutor: Processing {realm} in {repo_path}")
- +        
+ +
  +        try:
  +            # 1. Checkout Branch
  +            git_tools.checkout_new_branch(repo_path, self.branch_name)
- +            
+ +
  +            # 2. Add Code
  +            self._write_health_code(realm, repo_path)
- +            
+ +
  +            # 3. Commit
  +            git_tools.commit_files(
- +                repo_path, 
+ +                repo_path,
  +                "feat: add standardized health check endpoint",
  +                author_email="260104759+vindicta-bot@users.noreply.github.com"
  +            )
- +            
+ +
  +            # 4. Push
  +            git_tools.push_branch(repo_path, self.branch_name)
- +            
+ +
  +            # 5. Create PR
  +            pr_url = git_tools.create_pr(
  +                repo_path,
@@ -186,9 +186,9 @@ index a3a6171,f2275a1..0000000
  +                body=f"Automated PR by Vindicta Swarm.\n\nAdds health check for realm: `{realm}`.",
  +                reviewer="brandon-fox"
  +            )
- +            
+ +
  +            return f"PR Created: {pr_url}"
- +            
+ +
  +        except Exception as e:
  +            logger.error("showcase_execution_failed", realm=realm, error=str(e))
  +            return f"Failed: {str(e)}"
@@ -197,9 +197,9 @@ index a3a6171,f2275a1..0000000
  +    def _write_health_code(self, realm: str, repo_path: str):
  +        # Determine stack based on simple heuristics or domain registry hints
  +        # For simplicity in showcase, we look for package.json vs pyproject.toml
- +        
+ +
  +        is_node = os.path.exists(os.path.join(repo_path, "package.json"))
- +        
+ +
  +        if is_node:
  +            content = (
  +                "/**\n * Health Check Module\n */\n"
@@ -214,14 +214,14 @@ index a3a6171,f2275a1..0000000
  +            pkg_name = realm.replace("-", "_").lower()
  +            if realm == "Primordia-AI": pkg_name = "primordia"
  +            if realm == "Meta-Oracle": pkg_name = "meta_oracle"
- +            
+ +
  +            # Check standard src/<pkg>/ location
  +            target_file = f"src/{pkg_name}/health.py"
- +            
+ +
  +            # Fallback if src structure differs
  +            if not os.path.exists(os.path.join(repo_path, "src")):
  +                target_file = "health.py"
- +            
+ +
  +            content = (
  +                "import time\n\n"
  +                "def check_health() -> dict:\n"
@@ -232,7 +232,7 @@ index a3a6171,f2275a1..0000000
 ++=======
 + class SwarmConfig(TypedDict, total=False):
 +     """Configurable dependencies passed via RunnableConfig["configurable"]."""
-+ 
++
 +     llm_provider: Any       # LLMProvider protocol (Ollama or Mock)
 +     supervisor: Any         # AxiomaticSupervisor instance
 +     nexus_client: Any       # Optional NexusClient for reporting

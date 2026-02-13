@@ -38,14 +38,14 @@ class HardwareMonitor:
             try:
                 state = self._collect_metrics()
                 self._latest_state = state
-                
+
                 # Notify callbacks
                 for callback in self._callbacks:
                     try:
                         callback(state)
                     except Exception as e:
                         logger.error("monitor_callback_error", error=str(e))
-                        
+
                 await asyncio.sleep(self.polling_interval)
             except Exception as e:
                 logger.error("metrics_collection_error", error=str(e))
