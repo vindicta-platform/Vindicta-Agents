@@ -37,9 +37,17 @@ Execute daily at 5:30 PM by Product Owner agent.
    message: "docs: Update ROADMAP.md with current progress"
    ```
 
+## Review (5 min)
+
+1. Check `ROADMAP.md` against current progress:
+
+   - Are we on track for the 6-week goal?
+   - Any new risks?
+
 ## Checklist Syntax
 
 | `[ ]` | Not started |
 | `[/]` | In progress |
 | `[x]` | Completed |
 | ⚠️ | Slipped |
+```

@@ -6,7 +6,7 @@ description: Agile Delivery Lead afternoon PR review sweep
 
 Execute daily at 5:00 PM by Agile Delivery Lead agent.
 
-## Steps
+### 1. Identify PRs to Review
 
 // turbo
 1. Search all open PRs:

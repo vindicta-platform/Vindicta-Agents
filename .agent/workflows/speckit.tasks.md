@@ -41,7 +41,8 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 4. **Generate tasks.md**: Use `.specify/templates/tasks-template.md` as structure, fill with:
    - Correct feature name from plan.md
-   - Phase 1: Setup tasks (project initialization)
+   - Phase 1:<!-- markdownlint-disable MD013 -->
+# Speckit Tasks Workflowject initialization)
    - Phase 2: Foundational tasks (blocking prerequisites for all user stories)
    - Phase 3+: One phase per user story (in priority order from spec.md)
    - Each phase includes: story goal, independent test criteria, tests (if requested), implementation tasks

@@ -34,7 +34,7 @@ __pycache__/
 automation/logs/
 *.log
 report.xml
-simulation_output.txt
+simulation_output.txt\nmdlint*.txt
 
 # Output
 output/

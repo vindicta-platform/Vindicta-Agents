@@ -16,9 +16,12 @@ Execute daily at 8:30 AM by Senior Manager agent.
 2. Execute ADL Standup:
    ```
    /adl-standup
-   ```
-   - Capture sprint execution status
-   - Note any blockers identified
+### 1. Review (5 min)
+
+1. Check active sprints:
+
+   - Blocking issues?
+   - Unexpected delays?ny blockers identified
 
 3. Execute PO Roadmap Update:
    ```
@@ -63,8 +66,8 @@ Execute daily at 8:30 AM by Senior Manager agent.
 
 ## Escalation Criteria
 
-| Issue | Escalation |
-|-------|------------|
-| Blocker >4h unresolved | Immediate human alert |
-| Velocity drop >20% | Daily report highlight |
-| Cross-repo dependency conflict | Architect review |
+| Issue                          | Escalation             |
+| ------------------------------ | ---------------------- |
+| Blocker >4h unresolved         | Immediate human alert  |
+| Velocity drop >20%             | Daily report highlight |
+| Cross-repo dependency conflict | Architect review       |

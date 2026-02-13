@@ -3,7 +3,11 @@
 **Feature Branch**: `011-agent-isolation`
 **Created**: 2026-02-12
 **Status**: Draft
-**Input**: User description: "Agents need to run in an isolated envirnonement where they are isolated from the host system. They need to handle thier own git credentials and cloning so that they can work on repos without impacting other agents running on the same machine as well as push PRs, finally cleaning up by shutdown so they release the workspace and delete the locals after push."
+**Input**: User description: "Agents need to run in an isolated envirnonement where
+they are isolated from the host system. They need to handle thier own git
+credentials and cloning so that they can work on repos without impacting other
+agents running on the same machine as well as push PRs, finally cleaning up by
+shutdown so they release the workspace and delete the locals after push."
 
 ## Clarifications
 

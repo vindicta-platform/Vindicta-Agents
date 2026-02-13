@@ -21,20 +21,29 @@ Execute Friday at 4:00 PM by Agile Delivery Lead agent.
    query: "org:vindicta-platform is:merged merged:>=YYYY-MM-DD"
    ```
 
-3. Calculate metrics:
-   - Sprint completion % = closed / committed
-   - PR cycle time = avg(merge_date - create_date)
-   - Blocker resolution time
+3. Get closed issues this week:
 
-4. Compare to previous week (velocity trend)
+   ```yaml
+   is:issue is:closed closed:>2026-02-01
+   ```
 
-5. Generate report:
+4. Get open blockers:
+
+   ```yaml
+   is:issue is:open label:blocked
+   ```
+
+### 2. Generate Report
+
+1. Create `automation/reports/Velocity_Report_Week_X.md`
+2. Run `velocity-report` script (if available) or fill manually:
+
    ```markdown
-   # Weekly Velocity Report - Week [X]
+   # Velocity Report: Week X
 
-   | Metric | Value | Target | Status |
-   |--------|-------|--------|--------|
-   | Sprint Completion | X% | ≥85% | ✅/❌ |
-   | PR Cycle Time | Xh | <24h | ✅/❌ |
-   | Blockers Resolved | X | - | - |
+   | Metric            | Value | Target | Status |
+   | ----------------- | ----- | ------ | ------ |
+   | Sprint Completion | X%    | ≥85%   | ✅/❌    |
+   | PR Cycle Time     | Xh    | <24h   | ✅/❌    |
+   | Blockers Resolved | X     | -      | -      |
    ```
