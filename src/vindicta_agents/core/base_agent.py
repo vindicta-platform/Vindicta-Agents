@@ -1,7 +1,6 @@
-from pydantic import BaseModel, Field, PrivateAttr
+from pydantic import BaseModel, PrivateAttr
 from typing import Optional, Any, Literal
 import uuid
-from uuid import UUID, uuid4
 import json
 
 from ..telemetry.models import ResourceUsage
@@ -30,7 +29,7 @@ class BaseAgent(BaseModel):
         if not self.realm:
             logger.warning("handshake_failed", agent_id=self.agent_id, reason="missing_realm")
             return False
-        
+
         self.status = "Online"
         logger.info("handshake_success", agent_id=self.agent_id)
         return True
@@ -65,7 +64,7 @@ class BaseAgent(BaseModel):
             "action": action,
             "payload": payload
         }
-        
+
         try:
             await self._websocket.send(json.dumps(envelope))
             # Wait for ACK

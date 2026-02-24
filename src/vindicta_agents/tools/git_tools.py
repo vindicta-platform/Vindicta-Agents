@@ -7,8 +7,7 @@ Provides safe wrappers for Git and GitHub CLI operations to be used by Swarm Age
 
 import os
 import subprocess
-import uuid
-from typing import List, Optional, Tuple
+from typing import List
 
 from ..utils.logger import logger
 
@@ -34,7 +33,7 @@ def run_cmd(cmd: List[str], cwd: str, sensitive_args: List[str] = None) -> str:
         if sensitive_args:
              for arg in sensitive_args:
                  cmd_str = cmd_str.replace(arg, "[REDACTED]")
-        
+
         logger.error("command_failed", command=cmd_str, error=e.stderr)
         raise RuntimeError(f"Command failed: {e.stderr}")
 
@@ -57,7 +56,7 @@ def commit_files(repo_path: str, message: str, author_name: str = "Vindicta Bot"
     """Commits changes with the specified author. Optionally stages all changes first."""
     if stage_all:
         run_cmd(["git", "add", "."], cwd=repo_path)
-    
+
     author_flag = f"{author_name} <{author_email}>"
     run_cmd(["git", "commit", "--author", author_flag, "-m", message], cwd=repo_path)
     logger.info("files_committed", message=message, author=author_flag)

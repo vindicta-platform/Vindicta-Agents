@@ -1,7 +1,7 @@
 # PyCharm Dev Container Setup
 
-> **Requires:** PyCharm 2023.3+ (Professional) or IntelliJ IDEA Ultimate with Docker plugin.
-> Community Edition does **not** support dev containers natively.
+> **Requires:** PyCharm 2023.3+ (Professional) or IntelliJ IDEA Ultimate
+> with Docker plugin. Community Edition does **not** support dev containers natively.
 
 ## Prerequisites
 
@@ -24,6 +24,7 @@
    - Run `init-agent.sh` via `postCreateCommand`
 
 4. **Open the terminal** (`Alt+F12`) to verify:
+
    ```bash
    git config user.name    # → vindicta-bot
    gpg --list-secret-keys  # → shows the agent's key
@@ -34,6 +35,7 @@
 If your PyCharm version doesn't support dev containers natively:
 
 1. **Build the image manually:**
+
    ```powershell
    docker build --no-cache -t vindicta-agent .devcontainer/
    ```
@@ -44,6 +46,7 @@ If your PyCharm version doesn't support dev containers natively:
    - Image: `vindicta-agent`
 
 3. **Run init script manually** in the Docker terminal:
+
    ```bash
    init-agent.sh
    ```
@@ -53,6 +56,7 @@ If your PyCharm version doesn't support dev containers natively:
 For full dev container features without native support, use `docker-compose`:
 
 1. Create `docker-compose.dev.yml` in repo root:
+
    ```yaml
    version: '3.8'
    services:
@@ -67,6 +71,7 @@ For full dev container features without native support, use `docker-compose`:
    ```
 
 2. Start:
+
    ```powershell
    docker compose -f docker-compose.dev.yml up -d
    docker compose -f docker-compose.dev.yml exec agent init-agent.sh
@@ -76,8 +81,8 @@ For full dev container features without native support, use `docker-compose`:
 
 ## Troubleshooting
 
-| Issue | Fix |
-|---|---|
-| "Dev containers not supported" | Upgrade to PyCharm Professional 2023.3+ |
-| Docker connection failed | Settings → Build → Docker → verify connection |
-| `postCreateCommand` not running | Run `init-agent.sh` manually in terminal |
+| Issue                           | Fix                                           |
+| ------------------------------- | --------------------------------------------- |
+| "Dev containers not supported"  | Upgrade to PyCharm Professional 2023.3+       |
+| Docker connection failed        | Settings → Build → Docker → verify connection |
+| `postCreateCommand` not running | Run `init-agent.sh` manually in terminal      |

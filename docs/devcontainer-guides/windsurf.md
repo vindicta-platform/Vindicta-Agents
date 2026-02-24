@@ -1,12 +1,14 @@
 # Windsurf Dev Container Setup
 
-Windsurf is built on the VS Code engine and supports dev containers via the same extension.
+Windsurf is built on the VS Code engine and supports dev containers via the same
+extension.
 
 ## Prerequisites
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) running
 - [Windsurf](https://codeium.com/windsurf) installed
-- Dev Containers extension installed (should be available in Windsurf's extension marketplace)
+- Dev Containers extension installed (should be available in Windsurf's extension
+  marketplace)
 
 ## Setup
 
@@ -26,7 +28,8 @@ Windsurf is built on the VS Code engine and supports dev containers via the same
 3. **Reopen in Container:**
    - Windsurf detects `.devcontainer/` and prompts to reopen
    - Click **"Reopen in Container"**
-   - Or use Command Palette: `Ctrl+Shift+P` → **"Dev Containers: Reopen in Container"**
+   - Or use Command Palette: `Ctrl+Shift+P` → **"Dev Containers: Reopen in
+     Container"**
 
 4. **Wait for the build** (2-3 min first time). The `init-agent.sh` runs automatically.
 
@@ -50,8 +53,10 @@ When using Windsurf's Cascade AI inside the dev container:
 
 ## Troubleshooting
 
+<!-- markdownlint-disable MD013 -->
 | Issue                              | Fix                                                                                  |
 | ---------------------------------- | ------------------------------------------------------------------------------------ |
 | Dev Containers extension not found | Check Windsurf's extension compatibility; may need the VSIX from VS Code marketplace |
 | Container build fails              | Try `Ctrl+Shift+P` → "Dev Containers: Rebuild Without Cache"                         |
 | Cascade uses wrong git identity    | Ensure you're using the terminal **inside** the container, not the host terminal     |
+<!-- markdownlint-enable MD013 -->

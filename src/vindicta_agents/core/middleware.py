@@ -1,6 +1,6 @@
 
 from typing import Any
-from vindicta_agents.foundation.axioms import Dimensionality, EntityIdentity
+from vindicta_agents.foundation.axioms import Dimensionality
 
 def validate_intent(intent: Any) -> bool:
     """

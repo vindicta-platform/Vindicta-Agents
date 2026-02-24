@@ -2,16 +2,35 @@
 
 For environments without an IDE — CI pipelines, headless servers, or manual scripting.
 
-## Build
+### 1. Build the Image
 
 ```bash
-cd Vindicta-Agents
-docker build --no-cache -t vindicta-agent .devcontainer/
+docker build -t vindicta-agent .devcontainer/
 ```
+
+### 2. Run the Container
+
+```bash
+docker run -it --rm vindicta-agent
+```
+
+### 3. Verify Helper Scripts
+
+Inside the container, verify that the helper scripts are available:
+
+```bash
+which init-agent.sh
+```
+
+## Troubleshooting
+
+- **"File not found"**: Ensure you are running the `docker build` command from the
+  root of the repository.
 
 ## Run (Interactive)
 
 **First run (generate key):**
+
 ```bash
 docker run --rm \
   -v "$(pwd)/.keys:/output" \
@@ -24,6 +43,7 @@ docker run --rm \
 ```
 
 **Subsequent runs (import key):**
+
 ```bash
 docker run --rm \
   -v "$(pwd)/.keys:/output" \
@@ -50,9 +70,9 @@ docker run --rm \
 
 ## Environment Variables Reference
 
-| Variable | Required | Description |
-|---|---|---|
-| `AGENT_NAME` | Yes | Git commit author name |
-| `AGENT_EMAIL` | Yes | Git commit author email |
-| `AGENT_GITHUB_TOKEN` | Recommended | PAT for `gh` CLI and GPG key upload |
-| `GPG_PRIVATE_KEY` | Optional | Base64 GPG private key (skips generation if set) |
+| Variable             | Required    | Description                                      |
+| -------------------- | ----------- | ------------------------------------------------ |
+| `AGENT_NAME`         | Yes         | Git commit author name                           |
+| `AGENT_EMAIL`        | Yes         | Git commit author email                          |
+| `AGENT_GITHUB_TOKEN` | Recommended | PAT for `gh` CLI and GPG key upload              |
+| `GPG_PRIVATE_KEY`    | Optional    | Base64 GPG private key (skips generation if set) |

@@ -12,7 +12,7 @@ from vindicta_agents.telemetry.monitor import HardwareMonitor
 async def main():
     print("Starting Hardware Monitor Verification...")
     monitor = HardwareMonitor(polling_interval=1.0)
-    
+
     def on_update(state):
         print("\n--- Hardware State Update ---")
         print(f"Timestamp: {state.timestamp}")
@@ -26,7 +26,7 @@ async def main():
 
     print("Monitor started. Waiting for 3 seconds...")
     await asyncio.sleep(3.5)
-    
+
     monitor.stop()
     print("Monitor stopped.")
 

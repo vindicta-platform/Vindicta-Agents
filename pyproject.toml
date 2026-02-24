@@ -21,12 +21,12 @@ dependencies = [
     "aiosqlite>=0.22.1",
     "structlog>=25.5.0",
     "websockets>=16.0",
+    "gitpython>=3.1.0",
+    "PyGithub>=2.0.0",
+    "ollama",
 ]
 
 [project.optional-dependencies]
-llm = [
-    "ollama",
-]
 dev = [
     "mypy>=1.0.0",
     "ruff>=0.1.0",
@@ -37,6 +37,9 @@ dev = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/vindicta_agents"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
 
 [tool.hatch.metadata]
 allow-direct-references = true

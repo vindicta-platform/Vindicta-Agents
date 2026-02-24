@@ -1,7 +1,7 @@
 
 from uuid import UUID, uuid4
 from datetime import datetime
-from pydantic import BaseModel, Field, field_validator, ValidationError
+from pydantic import BaseModel, Field, field_validator
 from typing import Optional
 
 class EntityIdentity(BaseModel):

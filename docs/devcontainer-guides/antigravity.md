@@ -1,6 +1,7 @@
 # Antigravity Dev Container Setup
 
-Antigravity (Google DeepMind) operates as a terminal-based agent. It doesn't have native dev container UI integration, so the workflow uses the Docker CLI.
+Antigravity (Google DeepMind) operates as a terminal-based agent. It doesn't have
+native dev container UI integration, so the workflow uses the Docker CLI.
 
 ## Prerequisites
 
@@ -72,7 +73,8 @@ gh pr create --title "feat: description" --body "Details" --base main
 
 ### Running Commands Inside the Container
 
-Antigravity can use `run_command` to execute Docker commands on the host, which in turn run inside the container:
+Antigravity can use `run_command` to execute Docker commands on the host, which in
+turn run inside the container:
 
 ```powershell
 # One-shot command inside container
@@ -110,9 +112,11 @@ docker stop vindicta-agent-session && docker rm vindicta-agent-session
 
 ## Troubleshooting
 
+<!-- markdownlint-disable MD013 -->
 | Issue                          | Fix                                                      |
 | ------------------------------ | -------------------------------------------------------- |
 | `bash\r` errors                | Rebuild with `--no-cache` — Dockerfile runs `dos2unix`   |
 | GPG errors                     | Ensure `GPG_PRIVATE_KEY` is base64-encoded (no newlines) |
 | `+` in email breaks PowerShell | Wrap the `-e` value in double quotes                     |
 | Container can't push           | Check `AGENT_GITHUB_TOKEN` has `repo` scope              |
+<!-- markdownlint-enable MD013 -->

@@ -1,9 +1,8 @@
 from typing import Dict, Any, Union, Optional
 from pydantic import BaseModel
-from vindicta_agents.foundation.axioms import Dimensionality, TemporalDiscretization
+from vindicta_agents.foundation.axioms import Dimensionality
 from vindicta_agents.shared.memory import SharedMemory
 from vindicta_agents.utils.logger import FlightRecorder
-import uuid
 
 # Response Models
 class AxiomApproval(BaseModel):
@@ -44,12 +43,12 @@ class AxiomaticSupervisor:
         """
         Validates a proposed state change.
         """
-        current_state = self.memory.state
+        _current_state = self.memory.state
 
         # AX-04: Temporal Discretization Checks
         # Example: Can't move in Combat phase (simplified)
         if "action" in proposed_delta:
-             action_type = proposed_delta["action"] # e.g., "move", "attack"
+             _action_type = proposed_delta["action"]  # e.g., "move", "attack"
              # If strictly enforcing phases, check here.
              # For now, we assume the delta implies a phase-appropriate action or phase change.
 

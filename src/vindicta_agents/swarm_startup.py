@@ -8,7 +8,6 @@ Usage:
 """
 
 import os
-import sys
 from vindicta_agents.utils.discovery import find_meso_repos
 from vindicta_agents.core.base_agent import BaseAgent
 

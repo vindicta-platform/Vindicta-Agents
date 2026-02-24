@@ -15,32 +15,32 @@ print(f"DEBUG: Loaded nexus from {nexus.__file__}")
 
 def main():
     print("Initiating Swarm Showcase: Operation Health Check")
-    
+
     # 1. Initialize Showcase Provider
     provider = ShowcaseProvider()
-    
+
     config = {
         "configurable": {
             "thread_id": "showcase-run-003",
             "llm_provider": provider
         }
     }
-    
+
     initial_state = {
         "intent": "Add a standardized health check feature to all domains."
     }
-    
+
     print("\nPhase 1: Planning (PO -> Architect -> ADL)")
-    
+
     # Build graph WITHOUT interrupt for automated showcase
     # We simulate the pause manually if needed, but for "Showcase" we want it to flow.
     swarm = build_master_graph(interrupt=False)
-    
+
     try:
         # Execute start to finish
         for event in swarm.stream(initial_state, config=config):
             for node_name, state_update in event.items():
-                
+
                 # Check for Phase transition
                 if node_name == "HumanReview":
                     print("\n  [DONE] Planning Complete.")
@@ -52,14 +52,14 @@ def main():
                     continue
 
                 print(f"  [DONE] {node_name} completed.")
-                
+
                 if "spec_content" in state_update:
                     print(f"     [Spec]: {state_update['spec_content'][:50]}...")
                 if "plan_content" in state_update:
                     print(f"     [Plan]: {state_update['plan_content'][:50]}...")
                 if "tasks" in state_update:
                     print(f"     [Tasks]: Generated {len(state_update['tasks'])} tasks.")
-                
+
                 if "execution_log" in state_update:
                     for log in state_update['execution_log']:
                          if "PR Created" in log:
@@ -69,7 +69,7 @@ def main():
 
         print("\nShowcase Complete!")
         print("Verify the PRs in GitHub.")
-        
+
     except Exception as e:
         print(f"\nExecution Failed: {e}")
         import traceback

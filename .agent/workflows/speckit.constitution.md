@@ -1,5 +1,6 @@
 ---
-description: Create or update the project constitution from interactive or provided principle inputs, ensuring all dependent templates stay in sync.
+description: Create or update the proj<!-- markdownlint-disable MD013 -->
+# Speckit Constitution Workflowm interactive or provided principle inputs, ensuring all dependent templates stay in sync.
 handoffs:
   - label: Build Specification
     agent: speckit.specify

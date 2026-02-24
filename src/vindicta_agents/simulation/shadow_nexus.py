@@ -1,10 +1,8 @@
-import asyncio
 import uuid
-import json
-from typing import Dict, Any, List, Optional
-from vindicta_agents.supervisor.gatekeeper import AxiomaticSupervisor, AxiomApproval, ConstitutionalHalt
+from typing import Dict, Any, Optional
+from vindicta_agents.supervisor.gatekeeper import AxiomaticSupervisor, AxiomApproval
 from vindicta_agents.shared.memory import SharedMemory
-from vindicta_agents.simulation.scenarios import Scenario, ScenarioAction
+from vindicta_agents.simulation.scenarios import Scenario
 from vindicta_agents.utils.logger import FlightRecorder, logger
 
 class ShadowNexus:
@@ -42,18 +40,18 @@ class ShadowNexus:
         for action in scenario.actions:
             trace_id = str(uuid.uuid4())
             logger.info("scenario_tick", tick=action.tick, agent_id=action.agent_id, action_type=action.action_type)
-            
+
             # 1. Propose State Transition (Simulated Agent Action)
             outcome = self.supervisor.verify_state_transition(
                 trace_id=trace_id,
                 proposed_delta=action.payload
             )
-            
+
             # 2. Verify Outcome
             # Match against AXIOM_APPROVAL or CONSTITUTIONAL_HALT
             actual_type = "AXIOM_APPROVAL" if isinstance(outcome, AxiomApproval) else "CONSTITUTIONAL_HALT"
             match = actual_type == action.expected_outcome
-            
+
             step_result = {
                 "tick": action.tick,
                 "agent": action.agent_id,
@@ -63,11 +61,11 @@ class ShadowNexus:
                 "trace_id": trace_id
             }
             results["steps"].append(step_result)
-            
+
             if not match:
                 results["passed"] = False
                 logger.error("step_failure", expected=action.expected_outcome, actual=actual_type, tick=action.tick)
             else:
                 logger.info("step_success", outcome=actual_type, tick=action.tick)
-                
+
         return results

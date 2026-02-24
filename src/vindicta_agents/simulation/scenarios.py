@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List
 
 class ScenarioAction(BaseModel):
     agent_id: str

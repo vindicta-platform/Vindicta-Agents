@@ -42,7 +42,7 @@ class AITask(VindictaModel):
         default=RequestPriority.NORMAL,
         description="Task priority level",
     )
-    
+
     history: List[Dict[str, str]] = Field(default_factory=list)
     metadata: dict[str, Any] = Field(default_factory=dict)
     estimated_tokens: Optional[int] = Field(
@@ -61,7 +61,7 @@ class AITask(VindictaModel):
         """Executes the task and returns JSON output (MOCKED for now)."""
         if provider:
             return provider.execute_json(self.system, self.prompt)
-            
+
         # Mocking a list of tasks for the ADL usage pattern
         return [
             {

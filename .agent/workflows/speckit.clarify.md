@@ -18,7 +18,8 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 Goal: Detect and reduce ambiguity or missing decision points in the active feature specification and record the clarifications directly in the spec file.
 
-Note: This clarification workflow is expected to run (and be completed) BEFORE invoking `/speckit.plan`. If the user explicitly states they are skipping clarification (e.g., exploratory spike), you may proceed, but must warn that downstream rework risk increases.
+Note:<!-- markdownlint-disable MD013 -->
+# Speckit Clarification Workflow is expected to run (and be completed) BEFORE invoking `/speckit.plan`. If the user explicitly states they are skipping clarification (e.g., exploratory spike), you may proceed, but must warn that downstream rework risk increases.
 
 Execution steps:
 
@@ -108,12 +109,12 @@ Execution steps:
        - Format as: `**Recommended:** Option [X] - <reasoning>`
        - Then render all options as a Markdown table:
 
-       | Option | Description |
-       |--------|-------------|
-       | A | <Option A description> |
-       | B | <Option B description> |
-       | C | <Option C description> (add D/E as needed up to 5) |
-       | Short | Provide a different short answer (<=5 words) (Include only if free-form alternative is appropriate) |
+       | Option | Description                                                                                         |
+       | ------ | --------------------------------------------------------------------------------------------------- |
+       | A      | <Option A description>                                                                              |
+       | B      | <Option B description>                                                                              |
+       | C      | <Option C description> (add D/E as needed up to 5)                                                  |
+       | Short  | Provide a different short answer (<=5 words) (Include only if free-form alternative is appropriate) |
 
        - After the table, add: `You can reply with the option letter (e.g., "A"), accept the recommendation by saying "yes" or "recommended", or provide your own short answer.`
     - For short‑answer style (no meaningful discrete options):
