@@ -45,7 +45,7 @@ pythonpath = ["."]
 allow-direct-references = true
 
 [tool.uv.sources]
-vindicta-foundation = { path = "../vindicta-foundation", editable = true }
+vindicta-foundation = { workspace = true }
 
 [tool.mypy]
 strict = true
