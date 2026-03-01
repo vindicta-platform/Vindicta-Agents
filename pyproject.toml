@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "vindicta-agents"
@@ -34,12 +34,8 @@ dev = [
     "pytest-cov>=6.0.0",
 ]
 
-[tool.setuptools.packages.find]
-where = ["src"]
-
-[tool.uv.sources]
-# Local workspace override
-vindicta-foundation = { workspace = true }
+[tool.hatch.build.targets.wheel]
+packages = ["src/vindicta_agents"]
 
 [tool.mypy]
 strict = true
