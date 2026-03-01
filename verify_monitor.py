@@ -1,13 +1,13 @@
 import asyncio
 import sys
-from datetime import datetime
 
 # Adjust path to find src
-import sys
 import os
+
 sys.path.append(os.path.join(os.getcwd(), "src"))
 
 from vindicta_agents.telemetry.monitor import HardwareMonitor
+
 
 async def main():
     print("Starting Hardware Monitor Verification...")
@@ -19,7 +19,9 @@ async def main():
         print(f"CPU Total: {state.cpu.total_percent}%")
         print(f"Memory Used: {state.memory.percent}%")
         for gpu in state.gpus:
-             print(f"GPU {gpu.id} ({gpu.name}): {gpu.load*100:.1f}% Load, {gpu.temperature}C")
+            print(
+                f"GPU {gpu.id} ({gpu.name}): {gpu.load * 100:.1f}% Load, {gpu.temperature}C"
+            )
 
     monitor.register_callback(on_update)
     monitor.start()
@@ -29,6 +31,7 @@ async def main():
 
     monitor.stop()
     print("Monitor stopped.")
+
 
 if __name__ == "__main__":
     asyncio.run(main())

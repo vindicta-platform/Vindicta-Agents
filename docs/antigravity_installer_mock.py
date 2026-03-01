@@ -1,8 +1,7 @@
-import os
 import shutil
 import yaml
 from pathlib import Path
-from typing import List, Optional
+
 
 class Installer:
     def __init__(self, target_repo: Path, library_path: Path):
@@ -25,7 +24,7 @@ class Installer:
 
         # Load metadata
         metadata_path = agent_src / "metadata.yaml"
-        with open(metadata_path, 'r') as f:
+        with open(metadata_path, "r") as f:
             metadata = yaml.safe_load(f)
 
         # Copy AGENT.md

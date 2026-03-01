@@ -10,8 +10,6 @@ Tests cover:
 
 from __future__ import annotations
 
-import json
-import tempfile
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -24,6 +22,7 @@ from vindicta_agents.tools.file_ops import FileOps, SandboxViolationError
 # ──────────────────────────────────────────────
 # ToolRegistry
 # ──────────────────────────────────────────────
+
 
 class TestToolRegistry:
     def test_register_and_get(self) -> None:
@@ -53,6 +52,7 @@ class TestToolRegistry:
 # ──────────────────────────────────────────────
 # FileOps
 # ──────────────────────────────────────────────
+
 
 class TestFileOps:
     def test_write_and_read(self, tmp_path: Path) -> None:
@@ -94,9 +94,11 @@ class TestFileOps:
 # GitWorkspace (mocked)
 # ──────────────────────────────────────────────
 
+
 class TestGitWorkspace:
     def test_checkout_creates_branch(self) -> None:
         from vindicta_agents.tools import git_ops
+
         with patch.object(git_ops, "git") as mock_git:
             ws = git_ops.GitWorkspace("/fake/repo")
             ws.checkout("feature/test", create=True)
@@ -104,6 +106,7 @@ class TestGitWorkspace:
 
     def test_checkout_existing_branch(self) -> None:
         from vindicta_agents.tools import git_ops
+
         with patch.object(git_ops, "git") as mock_git:
             ws = git_ops.GitWorkspace("/fake/repo")
             ws.checkout("main")
@@ -111,6 +114,7 @@ class TestGitWorkspace:
 
     def test_branch_exists(self) -> None:
         from vindicta_agents.tools import git_ops
+
         with patch.object(git_ops, "git") as mock_git:
             mock_branch = MagicMock()
             mock_branch.name = "feature/existing"
@@ -122,6 +126,7 @@ class TestGitWorkspace:
 
     def test_add_and_commit(self) -> None:
         from vindicta_agents.tools import git_ops
+
         with patch.object(git_ops, "git") as mock_git:
             mock_commit = MagicMock()
             mock_commit.hexsha = "abc123"
@@ -136,6 +141,7 @@ class TestGitWorkspace:
 
     def test_add_single_string(self) -> None:
         from vindicta_agents.tools import git_ops
+
         with patch.object(git_ops, "git") as mock_git:
             ws = git_ops.GitWorkspace("/fake/repo")
             ws.add("single.py")
@@ -146,9 +152,11 @@ class TestGitWorkspace:
 # GitHubClient (mocked)
 # ──────────────────────────────────────────────
 
+
 class TestGitHubClient:
     def test_create_issue(self) -> None:
         from vindicta_agents.tools import github_ops
+
         with patch.object(github_ops, "Github") as mock_gh_cls:
             mock_issue = MagicMock()
             mock_issue.number = 42
@@ -167,6 +175,7 @@ class TestGitHubClient:
 
     def test_create_pr(self) -> None:
         from vindicta_agents.tools import github_ops
+
         with patch.object(github_ops, "Github") as mock_gh_cls:
             mock_pr = MagicMock()
             mock_pr.number = 10
@@ -187,9 +196,11 @@ class TestGitHubClient:
 # OllamaLLMProvider (mocked)
 # ──────────────────────────────────────────────
 
+
 class TestOllamaLLMProvider:
     def test_generate_text(self) -> None:
         from vindicta_agents.tools import llm_ops
+
         with patch.object(llm_ops, "_ollama_pkg") as mock_pkg:
             mock_pkg.Client.return_value.chat.return_value = {
                 "message": {"content": "Hello!"}
@@ -203,6 +214,7 @@ class TestOllamaLLMProvider:
 
     def test_generate_json(self) -> None:
         from vindicta_agents.tools import llm_ops
+
         with patch.object(llm_ops, "_ollama_pkg") as mock_pkg:
             mock_pkg.Client.return_value.chat.return_value = {
                 "message": {"content": '{"status": "ok"}'}
@@ -215,6 +227,7 @@ class TestOllamaLLMProvider:
 
     def test_generate_json_strips_code_fences(self) -> None:
         from vindicta_agents.tools import llm_ops
+
         with patch.object(llm_ops, "_ollama_pkg") as mock_pkg:
             mock_pkg.Client.return_value.chat.return_value = {
                 "message": {"content": '```json\n{"status": "ok"}\n```'}

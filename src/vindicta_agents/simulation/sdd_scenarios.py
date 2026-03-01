@@ -114,7 +114,10 @@ def build_sdd_decline_scenario() -> Scenario:
                 tick=4,
                 agent_id="PO",
                 action_type="regenerate_spec",
-                payload={"spec_content": "Improved spec with AC", "sdd_stage": "specify"},
+                payload={
+                    "spec_content": "Improved spec with AC",
+                    "sdd_stage": "specify",
+                },
                 expected_outcome="AXIOM_APPROVAL",
             ),
         ],

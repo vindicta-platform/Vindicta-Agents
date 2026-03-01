@@ -35,7 +35,9 @@ class ChainlitReviewBackend(ReviewBackend):
         self, title: str, content: str, gate_type: str
     ) -> ReviewDecision:
         if not CHAINLIT_AVAILABLE:
-            raise RuntimeError("Chainlit is not installed. Install with: pip install chainlit")
+            raise RuntimeError(
+                "Chainlit is not installed. Install with: pip install chainlit"
+            )
 
         # Show the content to the reviewer
         await cl.Message(
@@ -65,7 +67,11 @@ class ChainlitReviewBackend(ReviewBackend):
             timeout=300,
         ).send()
 
-        reason = reason_res.get("output", "No reason provided") if reason_res else "No reason provided"
+        reason = (
+            reason_res.get("output", "No reason provided")
+            if reason_res
+            else "No reason provided"
+        )
 
         return ReviewDecision(
             action=ReviewAction.DECLINE,
@@ -171,9 +177,7 @@ if CHAINLIT_AVAILABLE:
         )
 
         if not plan_decision.approved:
-            await cl.Message(
-                content=f"❌ Plan declined: {plan_decision.reason}"
-            ).send()
+            await cl.Message(content=f"❌ Plan declined: {plan_decision.reason}").send()
             return
 
         # Execution phase would follow...

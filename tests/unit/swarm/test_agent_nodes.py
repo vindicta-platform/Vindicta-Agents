@@ -15,7 +15,7 @@ Tests cover:
 from __future__ import annotations
 
 import pytest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 from vindicta_agents.swarm.config import MockLLMProvider
 from vindicta_agents.swarm.meta_graph import (
@@ -39,6 +39,7 @@ from vindicta_agents.swarm.spec_queue import DeclineRecord
 
 
 # ── Fixtures ─────────────────────────────────────────────────────────
+
 
 @pytest.fixture
 def mock_config():
@@ -71,6 +72,7 @@ def base_state():
 
 # ── PO Node ──────────────────────────────────────────────────────────
 
+
 class TestProductOwnerNode:
     def test_generates_spec(self, base_state, mock_config):
         result = product_owner_node(base_state, mock_config)
@@ -89,6 +91,7 @@ class TestProductOwnerNode:
 
 # ── Architect Node ───────────────────────────────────────────────────
 
+
 class TestArchitectNode:
     def test_creates_plan(self, base_state, mock_config):
         base_state["spec_content"] = "A spec about health checks"
@@ -99,6 +102,7 @@ class TestArchitectNode:
 
 
 # ── ADL Node ─────────────────────────────────────────────────────────
+
 
 class TestADLNode:
     def test_generates_tasks(self, base_state, mock_config):
@@ -111,10 +115,16 @@ class TestADLNode:
 
 # ── SD Node ──────────────────────────────────────────────────────────
 
+
 class TestSDNode:
     def test_delegates(self, base_state, mock_config):
         base_state["tasks"] = [
-            {"id": "t1", "description": "task", "target_realm": "vindicta-engine", "status": "pending"},
+            {
+                "id": "t1",
+                "description": "task",
+                "target_realm": "vindicta-engine",
+                "status": "pending",
+            },
         ]
         result = sd_node(base_state, mock_config)
         assert result["sdd_stage"] == "implement"
@@ -123,37 +133,59 @@ class TestSDNode:
 
 # ── Domain Agents ────────────────────────────────────────────────────
 
+
 class TestDomainAgents:
     def test_tech_priest(self, base_state, mock_config):
         base_state["tasks"] = [
-            {"id": "t1", "description": "engine task", "target_realm": "vindicta-engine", "status": "pending"},
+            {
+                "id": "t1",
+                "description": "engine task",
+                "target_realm": "vindicta-engine",
+                "status": "pending",
+            },
         ]
         result = tech_priest_node(base_state, mock_config)
         assert any("TechPriest" in e for e in result["execution_log"])
 
     def test_logos_historian(self, base_state, mock_config):
         base_state["tasks"] = [
-            {"id": "t1", "description": "warscribe task", "target_realm": "warscribe-system", "status": "pending"},
+            {
+                "id": "t1",
+                "description": "warscribe task",
+                "target_realm": "warscribe-system",
+                "status": "pending",
+            },
         ]
         result = logos_historian_node(base_state, mock_config)
         assert any("LogosHistorian" in e for e in result["execution_log"])
 
     def test_void_banker(self, base_state, mock_config):
         base_state["tasks"] = [
-            {"id": "t1", "description": "economy task", "target_realm": "vindicta-economy", "status": "pending"},
+            {
+                "id": "t1",
+                "description": "economy task",
+                "target_realm": "vindicta-economy",
+                "status": "pending",
+            },
         ]
         result = void_banker_node(base_state, mock_config)
         assert any("VoidBanker" in e for e in result["execution_log"])
 
     def test_no_matching_tasks(self, base_state, mock_config):
         base_state["tasks"] = [
-            {"id": "t1", "description": "other", "target_realm": "other-realm", "status": "pending"},
+            {
+                "id": "t1",
+                "description": "other",
+                "target_realm": "other-realm",
+                "status": "pending",
+            },
         ]
         result = tech_priest_node(base_state, mock_config)
         assert "TechPriest activated" in result["execution_log"]
 
 
 # ── SD Review ────────────────────────────────────────────────────────
+
 
 class TestSDReviewNode:
     def test_review(self, base_state, mock_config):
@@ -166,6 +198,7 @@ class TestSDReviewNode:
 
 
 # ── SSE Node ─────────────────────────────────────────────────────────
+
 
 class TestSSENode:
     def test_review_no_github(self, base_state, mock_config):
@@ -187,13 +220,16 @@ class TestSSENode:
         class ApproveProvider:
             def execute(self, system, prompt):
                 return "APPROVE all changes look good"
+
             def execute_json(self, system, prompt):
                 return []
 
-        config = {"configurable": {
-            "llm_provider": ApproveProvider(),
-            "github_client": mock_gh,
-        }}
+        config = {
+            "configurable": {
+                "llm_provider": ApproveProvider(),
+                "github_client": mock_gh,
+            }
+        }
         base_state["tasks"] = [{"id": "t1", "code_diff": "code", "status": "completed"}]
         base_state["feature_name"] = "health-check"
         base_state["branch_name"] = "feat/health-check"
@@ -204,6 +240,7 @@ class TestSSENode:
 
 
 # ── SM Nodes ─────────────────────────────────────────────────────────
+
 
 class TestSMNodes:
     def test_sm_boot(self, base_state, mock_config):
@@ -220,6 +257,7 @@ class TestSMNodes:
 
 # ── Task Router ──────────────────────────────────────────────────────
 
+
 class TestTaskRouter:
     def test_routes_to_agents(self, base_state):
         base_state["tasks"] = [
@@ -232,6 +270,7 @@ class TestTaskRouter:
 
     def test_no_pending_routes_to_end(self, base_state):
         from langgraph.graph import END
+
         base_state["tasks"] = [
             {"id": "t1", "target_realm": "vindicta-engine", "status": "completed"},
         ]
@@ -239,6 +278,7 @@ class TestTaskRouter:
 
 
 # ── Prompts Module ───────────────────────────────────────────────────
+
 
 class TestPrompts:
     def test_realm_mapping(self):
