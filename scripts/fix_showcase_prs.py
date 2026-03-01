@@ -1,30 +1,25 @@
 import sys
 import os
 import subprocess
-import json
-from typing import List, Dict
+from typing import List
 
 # Ensure src is in path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
-from vindicta_agents.tools import git_tools
 from vindicta_agents.swarm.domain_registry import DOMAIN_REGISTRY
 
+
 def run_cmd(cmd: List[str], cwd: str) -> str:
-    result = subprocess.run(
-        cmd,
-        cwd=cwd,
-        capture_output=True,
-        text=True,
-        check=False
-    )
+    result = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, check=False)
     if result.returncode != 0:
         print(f"Warning: Command failed: {' '.join(cmd)}\n{result.stderr}")
     return result.stdout.strip()
 
+
 def get_platform_root() -> str:
     # sibling to current repo
     return os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+
 
 def main():
     print("🧹 Cleaning up Swarm PRs (Removing ignored files)")
@@ -49,7 +44,9 @@ def main():
         # 1. Find the PR branch
         # We assume local branch is still there from run_showcase.py execution
         # Or we can grep `git branch`
-        branches = run_cmd(["git", "branch", "--list", "feat/health-check*"], cwd=repo_path)
+        branches = run_cmd(
+            ["git", "branch", "--list", "feat/health-check*"], cwd=repo_path
+        )
         if not branches:
             print("  No health-check branch found.")
             continue
@@ -62,7 +59,7 @@ def main():
         run_cmd(["git", "checkout", branch], cwd=repo_path)
 
         # 2. Add .gitignore if missing
-        ensure_gitignore(repo_path, info.get("package_name", "python")) # heuristic
+        ensure_gitignore(repo_path, info.get("package_name", "python"))  # heuristic
 
         # 3. Force Clean Index (The only way to be sure)
         print("  Purging index to respect .gitignore...")
@@ -77,11 +74,20 @@ def main():
         status = run_cmd(["git", "status", "--porcelain"], cwd=repo_path)
         if status:
             print("  Committing fixes...")
-            run_cmd(["git", "commit", "-m", "fix: enforce .gitignore and remove ignored files"], cwd=repo_path)
+            run_cmd(
+                [
+                    "git",
+                    "commit",
+                    "-m",
+                    "fix: enforce .gitignore and remove ignored files",
+                ],
+                cwd=repo_path,
+            )
             run_cmd(["git", "push"], cwd=repo_path)
             print("  ✅ Fix pushed.")
         else:
             print("  Index clean (nothing changed).")
+
 
 def ensure_gitignore(repo_path: str, tech_hint: str):
     gitignore_path = os.path.join(repo_path, ".gitignore")
@@ -95,7 +101,7 @@ def ensure_gitignore(repo_path: str, tech_hint: str):
         "coverage/",
         ".pytest_cache/",
         "dist/",
-        "build/"
+        "build/",
     ]
 
     if not os.path.exists(gitignore_path):
@@ -113,6 +119,7 @@ def ensure_gitignore(repo_path: str, tech_hint: str):
             print(f"  Updating .gitignore with {len(missing)} rules")
             with open(gitignore_path, "a") as f:
                 f.write("\n" + "\n".join(missing))
+
 
 if __name__ == "__main__":
     main()

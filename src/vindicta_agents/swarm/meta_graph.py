@@ -27,11 +27,13 @@ from .state import VindictaState
 
 # ── helpers ──────────────────────────────────────────────────────────
 
+
 def _provider(config: RunnableConfig):
     return config.get("configurable", {}).get("llm_provider", MockLLMProvider())
 
 
 # ── PO node ──────────────────────────────────────────────────────────
+
 
 def product_owner_node(state: VindictaState, config: RunnableConfig):
     """Generate a spec and add it to the spec queue.
@@ -60,7 +62,9 @@ def product_owner_node(state: VindictaState, config: RunnableConfig):
     )
     spec_text = task.execute(provider=provider)
 
-    feature_name = state.get("feature_name", state["intent"][:40].replace(" ", "-").lower())
+    feature_name = state.get(
+        "feature_name", state["intent"][:40].replace(" ", "-").lower()
+    )
 
     return {
         "spec_content": spec_text,
@@ -72,6 +76,7 @@ def product_owner_node(state: VindictaState, config: RunnableConfig):
 
 
 # ── Architect node ───────────────────────────────────────────────────
+
 
 def architect_node(state: VindictaState, config: RunnableConfig):
     """Create an implementation plan from the spec."""
@@ -93,6 +98,7 @@ def architect_node(state: VindictaState, config: RunnableConfig):
 
 
 # ── ADL node ─────────────────────────────────────────────────────────
+
 
 def adl_node(state: VindictaState, config: RunnableConfig):
     """Break the plan into executable tasks (JSON array)."""
@@ -117,8 +123,10 @@ def adl_node(state: VindictaState, config: RunnableConfig):
 
 # ── Generic Planning Node Factory (JSON-config driven) ───────────────
 
+
 class AgentConfig(TypedDict, total=False):
     """Configuration for a planning agent node."""
+
     task_name: str
     system_prompt: str
     input_key: str
@@ -128,7 +136,9 @@ class AgentConfig(TypedDict, total=False):
     json_mode: bool
 
 
-_PLANNING_CONFIG_PATH = pathlib.Path(__file__).parent / "configs" / "planning_agents.json"
+_PLANNING_CONFIG_PATH = (
+    pathlib.Path(__file__).parent / "configs" / "planning_agents.json"
+)
 
 
 def _load_planning_agents() -> Dict[str, AgentConfig]:
@@ -142,7 +152,9 @@ def _load_planning_agents() -> Dict[str, AgentConfig]:
 PLANNING_AGENTS: Dict[str, AgentConfig] = _load_planning_agents()
 
 
-def make_planning_node(agent_id: str) -> Callable[[VindictaState, RunnableConfig], Dict[str, Any]]:
+def make_planning_node(
+    agent_id: str,
+) -> Callable[[VindictaState, RunnableConfig], Dict[str, Any]]:
     """
     Creates a LangGraph node function for a specific planning agent.
 
@@ -152,7 +164,11 @@ def make_planning_node(agent_id: str) -> Callable[[VindictaState, RunnableConfig
     config_data = PLANNING_AGENTS.get(agent_id)
     if not config_data:
         # Fallback to the direct implementations
-        _fallbacks = {"PO": product_owner_node, "Architect": architect_node, "ADL": adl_node}
+        _fallbacks = {
+            "PO": product_owner_node,
+            "Architect": architect_node,
+            "ADL": adl_node,
+        }
         if agent_id in _fallbacks:
             return _fallbacks[agent_id]
         raise ValueError(f"Unknown agent_id: {agent_id}")
@@ -196,6 +212,7 @@ def make_planning_node(agent_id: str) -> Callable[[VindictaState, RunnableConfig
 
 
 # ── Graph Construction ───────────────────────────────────────────────
+
 
 def build_meta_graph() -> Any:
     """

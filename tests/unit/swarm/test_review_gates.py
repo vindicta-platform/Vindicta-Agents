@@ -26,6 +26,7 @@ from vindicta_agents.swarm.spec_queue import DeclineMemory
 
 # ── ReviewDecision ───────────────────────────────────────────────────
 
+
 class TestReviewDecision:
     def test_approve(self):
         d = ReviewDecision(action=ReviewAction.APPROVE)
@@ -45,6 +46,7 @@ class TestReviewDecision:
 
 # ── AutoApproveBackend ───────────────────────────────────────────────
 
+
 class TestAutoApproveBackend:
     def test_always_approves(self):
         backend = AutoApproveBackend()
@@ -56,6 +58,7 @@ class TestAutoApproveBackend:
 
 
 # ── AutoDeclineBackend ───────────────────────────────────────────────
+
 
 class TestAutoDeclineBackend:
     def test_declines_with_reason(self):
@@ -76,11 +79,14 @@ class TestAutoDeclineBackend:
 
 # ── CallbackBackend ──────────────────────────────────────────────────
 
+
 class TestCallbackBackend:
     def test_delegates_to_callback(self):
         def my_callback(title, content, gate_type):
             return ReviewDecision(
-                action=ReviewAction.APPROVE if "good" in content else ReviewAction.DECLINE,
+                action=ReviewAction.APPROVE
+                if "good" in content
+                else ReviewAction.DECLINE,
                 reason="" if "good" in content else "Bad content",
             )
 
@@ -100,6 +106,7 @@ class TestCallbackBackend:
 
 # ── ReviewGate ───────────────────────────────────────────────────────
 
+
 class TestReviewGate:
     def test_approve_gate(self):
         gate = ReviewGate(backend=AutoApproveBackend(), gate_type="spec_review")
@@ -109,7 +116,9 @@ class TestReviewGate:
         assert decision.approved is True
 
     def test_decline_gate(self):
-        gate = ReviewGate(backend=AutoDeclineBackend("Needs AC"), gate_type="spec_review")
+        gate = ReviewGate(
+            backend=AutoDeclineBackend("Needs AC"), gate_type="spec_review"
+        )
         decision = asyncio.get_event_loop().run_until_complete(
             gate.review("Spec: auth", "Auth spec content")
         )
@@ -122,6 +131,7 @@ class TestReviewGate:
 
 
 # ── Decline Capture Integration ──────────────────────────────────────
+
 
 class TestDeclineCaptureFlow:
     def test_decline_stores_in_memory(self):

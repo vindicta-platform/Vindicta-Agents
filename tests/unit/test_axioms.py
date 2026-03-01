@@ -1,4 +1,3 @@
-
 import pytest
 import uuid
 from datetime import datetime
@@ -12,11 +11,13 @@ from vindicta_agents.foundation.axioms import (
     TemporalDiscretization,
 )
 
+
 def test_entity_identity_valid():
     """Test that EntityIdentity creates a valid UUID and timestamp."""
     entity = EntityIdentity()
     assert isinstance(entity.id, uuid.UUID)
     assert isinstance(entity.created_at, datetime)
+
 
 def test_dimensionality_valid():
     """Test valid coordinates."""
@@ -26,10 +27,12 @@ def test_dimensionality_valid():
     assert dim.y == 20.0
     assert dim.z == 0.0
 
+
 def test_dimensionality_negative_coordinates():
     """Test that negative coordinates raise ValidationError."""
     with pytest.raises(ValidationError):
         Dimensionality(x=-5.0, y=10.0, z=0.0)
+
 
 def test_dimensionality_out_of_bounds():
     """Test that out of bounds coordinates raise ValidationError."""
@@ -40,10 +43,12 @@ def test_dimensionality_out_of_bounds():
     with pytest.raises(ValidationError):
         Dimensionality(x=10.0, y=61.0, z=0.0)
 
+
 def test_probability_source():
     """Test that ProbabilitySource references a provider."""
     prob = ProbabilitySource(provider_id="central-entropy")
     assert prob.provider_id == "central-entropy"
+
 
 def test_temporal_discretization():
     """Test discrete phases."""

@@ -1,11 +1,11 @@
 import sys
 import unittest
-from langgraph.graph import StateGraph
 
 # Adjust path to import src
 sys.path.append("src")
 
 from vindicta_agents.swarm.domain_graph import build_domain_graph, DOMAIN_REGISTRY
+
 
 class TestDomainGraphStructure(unittest.TestCase):
     def test_graph_construction(self):
@@ -22,9 +22,14 @@ class TestDomainGraphStructure(unittest.TestCase):
         # Check all registered domain nodes
         for realm, info in DOMAIN_REGISTRY.items():
             node_name = info["node_name"]
-            self.assertIn(node_name, nodes, f"Node {node_name} for realm {realm} not found in graph")
+            self.assertIn(
+                node_name,
+                nodes,
+                f"Node {node_name} for realm {realm} not found in graph",
+            )
 
         print(f"Verified {len(DOMAIN_REGISTRY)} domain nodes + SetupExecution.")
+
 
 if __name__ == "__main__":
     unittest.main()

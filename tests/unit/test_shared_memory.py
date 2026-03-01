@@ -1,11 +1,12 @@
-import pytest
-from vindicta_agents.shared.memory import SharedMemory, BoardState
+from vindicta_agents.shared.memory import SharedMemory
+
 
 def test_shared_memory_singleton():
     mem1 = SharedMemory()
     mem2 = SharedMemory()
     assert mem1 is mem2
     assert mem1.state is mem2.state
+
 
 def test_board_state_update():
     mem = SharedMemory()
@@ -18,6 +19,7 @@ def test_board_state_update():
     assert mem.state.phase == "Movement"
     assert mem.state.turn == 2
     assert mem.state.version != initial_version
+
 
 def test_unit_update():
     mem = SharedMemory()

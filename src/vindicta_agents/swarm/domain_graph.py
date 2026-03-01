@@ -35,11 +35,13 @@ from .state import VindictaState
 
 # ── helpers ──────────────────────────────────────────────────────────
 
+
 def _provider(config: RunnableConfig):
     return config.get("configurable", {}).get("llm_provider", MockLLMProvider())
 
 
 # ── SD node (delegation + routing) ───────────────────────────────────
+
 
 def sd_node(state: VindictaState, config: RunnableConfig):
     """Review task list and prepare delegation to domain agents."""
@@ -62,13 +64,16 @@ def sd_node(state: VindictaState, config: RunnableConfig):
 
 # ── Domain Agent Implementations (LLM-powered) ──────────────────────
 
+
 def _domain_agent_node(realm: str, state: VindictaState, config: RunnableConfig):
     """Generic domain agent: generates code for tasks matching *realm*."""
     provider = _provider(config)
     configurable = config.get("configurable", {})
     supervisor = configurable.get("supervisor")
     agent_name = REALM_TO_AGENT.get(realm, realm)
-    system_prompt = REALM_TO_SYSTEM_PROMPT.get(realm, f"You are a developer for {realm}.")
+    system_prompt = REALM_TO_SYSTEM_PROMPT.get(
+        realm, f"You are a developer for {realm}."
+    )
 
     tasks = state.get("tasks", [])
     completed = []
@@ -82,11 +87,13 @@ def _domain_agent_node(realm: str, state: VindictaState, config: RunnableConfig)
                 prompt=f"Implement this task:\n{t.get('description', '')}",
             )
             code_diff = task.execute(provider=provider)
-            completed.append({
-                **t,
-                "status": "completed",
-                "code_diff": code_diff,
-            })
+            completed.append(
+                {
+                    **t,
+                    "status": "completed",
+                    "code_diff": code_diff,
+                }
+            )
             log_entries.append(f"{agent_name}: completed '{t.get('id', '?')}'")
 
     delta = {"execution_log": log_entries or [f"{agent_name} activated"]}
@@ -112,6 +119,7 @@ def void_banker_node(state: VindictaState, config: RunnableConfig):
 
 # ── SD Review node ───────────────────────────────────────────────────
 
+
 def sd_review_node(state: VindictaState, config: RunnableConfig):
     """Review code diffs from domain agents for quality."""
     provider = _provider(config)
@@ -135,6 +143,7 @@ def sd_review_node(state: VindictaState, config: RunnableConfig):
 
 
 # ── SSE node ─────────────────────────────────────────────────────────
+
 
 def sse_node(state: VindictaState, config: RunnableConfig):
     """Final review + PR creation."""
@@ -172,11 +181,14 @@ def sse_node(state: VindictaState, config: RunnableConfig):
     return {
         "pr_url": pr_url,
         "sdd_stage": "merge" if pr_url else "verify",
-        "execution_log": [f"SSE: PR created ({pr_url})" if pr_url else "SSE: review complete"],
+        "execution_log": [
+            f"SSE: PR created ({pr_url})" if pr_url else "SSE: review complete"
+        ],
     }
 
 
 # ── SM nodes ─────────────────────────────────────────────────────────
+
 
 def sm_node(state: VindictaState, config: RunnableConfig):
     """Boot the swarm: set initial stage and priorities."""
@@ -212,8 +224,10 @@ def sm_merge_node(state: VindictaState, config: RunnableConfig):
 
 # ── Integrity Check Helpers (from showcase) ──────────────────────────
 
+
 class IntegrityCheckResult(TypedDict, total=False):
     """Result structure for an integrity check operation."""
+
     status: str
     error: Optional[str]
     raw_output: Optional[str]
@@ -237,7 +251,7 @@ def _get_python_check_cmd(repo_path: str, package_name: str) -> List[str]:
 
 def _get_node_ts_check_cmd(repo_path: str, package_name: str) -> List[str]:
     if "ui-kit" in package_name:
-         return ["pnpm", "--filter", package_name, "run", "check-integrity"]
+        return ["pnpm", "--filter", package_name, "run", "check-integrity"]
     return ["npm", "run", "check-integrity"]
 
 
@@ -249,14 +263,16 @@ def _execute_check_cmd(cmd: List[str], cwd: str) -> IntegrityCheckResult:
             capture_output=True,
             text=True,
             check=True,
-            shell=True if os.name == 'nt' else False
+            shell=True if os.name == "nt" else False,
         )
         try:
             return json.loads(result.stdout)
         except json.JSONDecodeError:
             return {"status": "error", "raw_output": result.stdout}
     except subprocess.CalledProcessError as e:
-        logger.error("integrity_check_failed", command=cmd, error=str(e), stderr=e.stderr)
+        logger.error(
+            "integrity_check_failed", command=cmd, error=str(e), stderr=e.stderr
+        )
         return {"status": "check_failed", "error": e.stderr}
     except Exception as e:
         logger.error("integrity_check_execution_error", command=cmd, error=str(e))
@@ -269,13 +285,13 @@ def run_integrity_check(realm: str) -> IntegrityCheckResult:
         return {"status": "error", "error": f"Realm {realm} not found in registry"}
 
     platform_root = _get_platform_root()
-    repo_path = os.path.join(platform_root, domain['repo_name'])
+    repo_path = os.path.join(platform_root, domain["repo_name"])
 
     if not os.path.isdir(repo_path):
-         return {
-             "status": "error",
-             "error": f"Repository path not found: {repo_path}. Set VINDICTA_PLATFORM_ROOT if layout differs."
-         }
+        return {
+            "status": "error",
+            "error": f"Repository path not found: {repo_path}. Set VINDICTA_PLATFORM_ROOT if layout differs.",
+        }
 
     package_name = domain.get("package_name", "")
     primary_language = domain.get("primary_language", "").lower()
@@ -293,7 +309,10 @@ def run_integrity_check(realm: str) -> IntegrityCheckResult:
 
 # ── Generic Node Factory (Showcase) ─────────────────────────────────
 
-def make_domain_node(realm: str) -> Callable[[VindictaState, RunnableConfig], Dict[str, Any]]:
+
+def make_domain_node(
+    realm: str,
+) -> Callable[[VindictaState, RunnableConfig], Dict[str, Any]]:
     domain = DOMAIN_REGISTRY.get(realm)
     node_name = domain["node_name"] if domain else "UnknownNode"
 
@@ -338,6 +357,7 @@ def setup_execution_node(state: VindictaState) -> Dict[str, Any]:
 
 # ── Router ───────────────────────────────────────────────────────────
 
+
 def task_router(state: VindictaState) -> Union[List[str], str]:
     tasks = state.get("tasks", [])
     active_realms = set(
@@ -358,6 +378,7 @@ def task_router(state: VindictaState) -> Union[List[str], str]:
 
 
 # ── Graph Construction ───────────────────────────────────────────────
+
 
 def build_domain_graph() -> Any:
     domain_builder = StateGraph(VindictaState)

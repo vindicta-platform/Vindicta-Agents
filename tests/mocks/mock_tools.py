@@ -33,7 +33,7 @@ class MockFileOps:
         entries = set()
         for p in self._files:
             if p.startswith(prefix):
-                rel = p[len(prefix):]
+                rel = p[len(prefix) :]
                 entries.add(rel.split("/")[0])
         return sorted(entries)
 
@@ -64,7 +64,9 @@ class MockGitWorkspace:
 
     def commit(self, message: str) -> str:
         sha = f"mock-{len(self.commits):04d}"
-        self.commits.append({"sha": sha, "message": message, "branch": self.current_branch})
+        self.commits.append(
+            {"sha": sha, "message": message, "branch": self.current_branch}
+        )
         return sha
 
     def push(self) -> None:
@@ -83,17 +85,31 @@ class MockGitHubClient:
         self.merged: List[str] = []
 
     def create_issue(self, title: str, body: str = "", **kwargs) -> Dict[str, Any]:
-        issue = {"number": len(self.issues) + 1, "title": title, "body": body, "url": f"https://github.com/mock/issues/{len(self.issues)+1}"}
+        issue = {
+            "number": len(self.issues) + 1,
+            "title": title,
+            "body": body,
+            "url": f"https://github.com/mock/issues/{len(self.issues) + 1}",
+        }
         self.issues.append(issue)
         return issue
 
-    def create_pr(self, title: str, body: str = "", head: str = "", base: str = "main") -> Any:
+    def create_pr(
+        self, title: str, body: str = "", head: str = "", base: str = "main"
+    ) -> Any:
         class PRResult:
             def __init__(self, num, url_):
                 self.number = num
                 self.url = url_
+
         pr_num = len(self.prs) + 1
-        pr = {"number": pr_num, "title": title, "head": head, "base": base, "url": f"https://github.com/mock/pull/{pr_num}"}
+        pr = {
+            "number": pr_num,
+            "title": title,
+            "head": head,
+            "base": base,
+            "url": f"https://github.com/mock/pull/{pr_num}",
+        }
         self.prs.append(pr)
         return PRResult(pr_num, pr["url"])
 
@@ -107,10 +123,17 @@ class MockGitHubClient:
 class MockLLMProvider:
     """Deterministic LLM for testing — returns controlled responses."""
 
-    def __init__(self, text_response: str = "[MOCK]", json_response: Optional[List[Dict]] = None) -> None:
+    def __init__(
+        self, text_response: str = "[MOCK]", json_response: Optional[List[Dict]] = None
+    ) -> None:
         self._text = text_response
         self._json = json_response or [
-            {"id": "task-1", "description": "Mock task", "target_realm": "vindicta-engine", "status": "pending"},
+            {
+                "id": "task-1",
+                "description": "Mock task",
+                "target_realm": "vindicta-engine",
+                "status": "pending",
+            },
         ]
 
     def execute(self, system: Optional[str], prompt: str) -> str:

@@ -16,7 +16,6 @@ from vindicta_agents.swarm.domain_graph import (
     sm_merge_node,
     sm_node,
     sse_node,
-    task_router,
     tech_priest_node,
 )
 from vindicta_agents.swarm.meta_graph import (
@@ -25,7 +24,6 @@ from vindicta_agents.swarm.meta_graph import (
     product_owner_node,
 )
 from vindicta_agents.swarm.review_gates import (
-    AutoApproveBackend,
     AutoDeclineBackend,
     ReviewGate,
 )
@@ -140,17 +138,36 @@ class TestE2EHappyPath:
         class ApproveProvider:
             def execute(self, system, prompt):
                 return "APPROVE all looks good"
-            def execute_json(self, system, prompt):
-                return [{"id": "t-1", "description": "task", "target_realm": "vindicta-engine", "status": "pending"}]
 
-        config = {"configurable": {
-            "llm_provider": ApproveProvider(),
-            "github_client": mock_gh,
-        }}
+            def execute_json(self, system, prompt):
+                return [
+                    {
+                        "id": "t-1",
+                        "description": "task",
+                        "target_realm": "vindicta-engine",
+                        "status": "pending",
+                    }
+                ]
+
+        config = {
+            "configurable": {
+                "llm_provider": ApproveProvider(),
+                "github_client": mock_gh,
+            }
+        }
         state = initial_state
 
-        for node_fn in [sm_node, product_owner_node, architect_node, adl_node,
-                        sd_node, tech_priest_node, sd_review_node, sse_node, sm_merge_node]:
+        for node_fn in [
+            sm_node,
+            product_owner_node,
+            architect_node,
+            adl_node,
+            sd_node,
+            tech_priest_node,
+            sd_review_node,
+            sse_node,
+            sm_merge_node,
+        ]:
             merge_state(state, node_fn(state, config))
 
         assert state["pr_url"] is not None

@@ -1,15 +1,14 @@
-
 import pytest
-import os
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 try:
     from vindicta_agents.utils.discovery import find_meso_repos
 except ImportError:
     pytest.fail("Could not import discovery module")
 
-@patch('os.path.exists')
-@patch('os.path.isdir')
+
+@patch("os.path.exists")
+@patch("os.path.isdir")
 def test_find_meso_repos_success(mock_isdir, mock_exists):
     """Test identifying all repos when they exist."""
     # Mock that all looked-up paths exist
@@ -25,9 +24,11 @@ def test_find_meso_repos_success(mock_isdir, mock_exists):
     assert "vindicta-engine" in repos
     assert repos["vindicta-foundation"]["status"] == "verified"
 
-@patch('os.path.exists')
+
+@patch("os.path.exists")
 def test_find_meso_repos_missing(mock_exists):
     """Test identifying missing repos."""
+
     # Mock that some exist and others don't
     def side_effect(path):
         if "vindicta-engine" in path:
