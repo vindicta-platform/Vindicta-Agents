@@ -12,9 +12,6 @@ then executes the full SDD lifecycle.
 from __future__ import annotations
 
 import argparse
-import os
-import sys
-import uuid
 
 from vindicta_agents.swarm.config import MockLLMProvider
 from vindicta_agents.swarm.meta_graph import (
@@ -26,9 +23,6 @@ from vindicta_agents.swarm.domain_graph import (
     sd_node,
     sm_node,
     sm_merge_node,
-    tech_priest_node,
-    logos_historian_node,
-    void_banker_node,
     sd_review_node,
     sse_node,
 )
@@ -84,14 +78,10 @@ def run_pipeline(intent: str, use_mock: bool = True) -> dict:
                     self._inner = OllamaLLMProvider()
 
                 def execute(self, system, prompt):
-                    return self._inner.generate_text(
-                        system=system or "", prompt=prompt
-                    )
+                    return self._inner.generate_text(system=system or "", prompt=prompt)
 
                 def execute_json(self, system, prompt):
-                    return self._inner.generate_json(
-                        system=system or "", prompt=prompt
-                    )
+                    return self._inner.generate_json(system=system or "", prompt=prompt)
 
             provider = OllamaAdapter()
         except Exception as e:
@@ -114,9 +104,9 @@ def run_pipeline(intent: str, use_mock: bool = True) -> dict:
     ]
 
     for name, node_fn in stages:
-        print(f"\n{'='*60}")
+        print(f"\n{'=' * 60}")
         print(f"  ▶ {name}")
-        print(f"{'='*60}")
+        print(f"{'=' * 60}")
 
         result = node_fn(state, config)
         state.update(result)
@@ -129,9 +119,9 @@ def run_pipeline(intent: str, use_mock: bool = True) -> dict:
             print(f"    ❌ Error: {state['error_log']}")
             break
 
-    print(f"\n{'='*60}")
-    print(f"  🏁 Pipeline Complete")
-    print(f"{'='*60}")
+    print(f"\n{'=' * 60}")
+    print("  🏁 Pipeline Complete")
+    print(f"{'=' * 60}")
     print(f"  SDD Stage: {state.get('sdd_stage', '?')}")
     print(f"  Phase: {state.get('current_phase', '?')}")
     print(f"  Tasks: {len(state.get('tasks', []))}")

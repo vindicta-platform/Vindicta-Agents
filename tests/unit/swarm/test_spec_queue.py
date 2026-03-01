@@ -24,6 +24,7 @@ from vindicta_agents.swarm.state import VindictaState
 # SpecQueueItem
 # ──────────────────────────────────────────────
 
+
 class TestSpecQueueItem:
     def test_creation(self) -> None:
         item = SpecQueueItem(feature_name="auth", content="spec text")
@@ -42,6 +43,7 @@ class TestSpecQueueItem:
 # DeclineRecord
 # ──────────────────────────────────────────────
 
+
 class TestDeclineRecord:
     def test_creation(self) -> None:
         r = DeclineRecord(feature_name="bad-spec", reason="Too vague")
@@ -57,6 +59,7 @@ class TestDeclineRecord:
 # ──────────────────────────────────────────────
 # SpecQueue
 # ──────────────────────────────────────────────
+
 
 class TestSpecQueue:
     def test_starts_empty(self) -> None:
@@ -124,6 +127,7 @@ class TestSpecQueue:
 # DeclineMemory
 # ──────────────────────────────────────────────
 
+
 class TestDeclineMemory:
     def test_starts_empty(self) -> None:
         m = DeclineMemory()
@@ -170,6 +174,7 @@ class TestDeclineMemory:
 # VindictaState field presence
 # ──────────────────────────────────────────────
 
+
 class TestVindictaState:
     """Verify that the TypedDict has all expected SDD lifecycle keys."""
 
@@ -200,6 +205,13 @@ class TestVindictaState:
     def test_backward_compat(self) -> None:
         """Original fields from the old state are still present."""
         annotations = VindictaState.__annotations__
-        for f in ["intent", "spec_content", "plan_content", "tasks",
-                   "current_phase", "error_log", "execution_log"]:
+        for f in [
+            "intent",
+            "spec_content",
+            "plan_content",
+            "tasks",
+            "current_phase",
+            "error_log",
+            "execution_log",
+        ]:
             assert f in annotations

@@ -34,13 +34,13 @@ class LLMProvider(Protocol):
 class SwarmConfig(TypedDict, total=False):
     """Configurable dependencies passed via RunnableConfig["configurable"]."""
 
-    llm_provider: Any       # LLMProvider protocol (Ollama or Mock)
-    supervisor: Any         # AxiomaticSupervisor instance
-    nexus_client: Any       # Optional NexusClient for reporting
-    tools: Any              # ToolRegistry instance
-    github_client: Any      # GitHubClient instance
-    github_token: str       # Shared GITHUB_TOKEN (fallback for GitHubClient)
-    workspace_root: str     # Absolute path to the workspace for file/git ops
+    llm_provider: Any  # LLMProvider protocol (Ollama or Mock)
+    supervisor: Any  # AxiomaticSupervisor instance
+    nexus_client: Any  # Optional NexusClient for reporting
+    tools: Any  # ToolRegistry instance
+    github_client: Any  # GitHubClient instance
+    github_token: str  # Shared GITHUB_TOKEN (fallback for GitHubClient)
+    workspace_root: str  # Absolute path to the workspace for file/git ops
     domain_map: dict[str, str]
 
 
@@ -59,22 +59,18 @@ class OllamaLLMProvider:
 
     def execute(self, system: str | None, prompt: str) -> str:
         url = f"{self.base_url}/api/generate"
-        payload = {
-            "model": self.model,
-            "prompt": prompt,
-            "stream": False
-        }
+        payload = {"model": self.model, "prompt": prompt, "stream": False}
         if system:
             payload["system"] = system
 
         try:
             req = urllib.request.Request(
                 url,
-                data=json.dumps(payload).encode('utf-8'),
-                headers={'Content-Type': 'application/json'}
+                data=json.dumps(payload).encode("utf-8"),
+                headers={"Content-Type": "application/json"},
             )
             with urllib.request.urlopen(req) as response:
-                result = json.loads(response.read().decode('utf-8'))
+                result = json.loads(response.read().decode("utf-8"))
                 return result.get("response", "")
         except Exception as e:
             return f"[Ollama Error] {str(e)}"
@@ -94,6 +90,7 @@ class ShowcaseProvider:
     Deterministic provider for the 'Swarm Showcase' demo.
     Ensures 100% success rate for the 'Add Health Check' scenario.
     """
+
     def __init__(self):
         self.branch_name = f"feat/health-check-{uuid.uuid4().hex[:8]}"
 
@@ -120,14 +117,54 @@ class ShowcaseProvider:
     def execute_json(self, system: str | None, prompt: str) -> list[dict]:
         # ADL - Validates prompt to ensure we are in the right context
         return [
-            {"id": "1", "description": "Implement health check", "target_realm": "vindicta-engine", "status": "pending"},
-            {"id": "2", "description": "Implement health check", "target_realm": "warscribe-system", "status": "pending"},
-            {"id": "3", "description": "Implement health check", "target_realm": "vindicta-economy", "status": "pending"},
-            {"id": "4", "description": "Implement health check", "target_realm": "primordia-ai", "status": "pending"},
-            {"id": "5", "description": "Implement health check", "target_realm": "meta-oracle", "status": "pending"},
-            {"id": "6", "description": "Implement health check", "target_realm": "logi-slate-ui", "status": "pending"},
-            {"id": "7", "description": "Implement health check", "target_realm": "vindicta-portal", "status": "pending"},
-            {"id": "8", "description": "Implement health check", "target_realm": "vindicta-api", "status": "pending"},
+            {
+                "id": "1",
+                "description": "Implement health check",
+                "target_realm": "vindicta-engine",
+                "status": "pending",
+            },
+            {
+                "id": "2",
+                "description": "Implement health check",
+                "target_realm": "warscribe-system",
+                "status": "pending",
+            },
+            {
+                "id": "3",
+                "description": "Implement health check",
+                "target_realm": "vindicta-economy",
+                "status": "pending",
+            },
+            {
+                "id": "4",
+                "description": "Implement health check",
+                "target_realm": "primordia-ai",
+                "status": "pending",
+            },
+            {
+                "id": "5",
+                "description": "Implement health check",
+                "target_realm": "meta-oracle",
+                "status": "pending",
+            },
+            {
+                "id": "6",
+                "description": "Implement health check",
+                "target_realm": "logi-slate-ui",
+                "status": "pending",
+            },
+            {
+                "id": "7",
+                "description": "Implement health check",
+                "target_realm": "vindicta-portal",
+                "status": "pending",
+            },
+            {
+                "id": "8",
+                "description": "Implement health check",
+                "target_realm": "vindicta-api",
+                "status": "pending",
+            },
         ]
 
     def execute_domain_task(self, realm: str, repo_path: str) -> str:
@@ -147,7 +184,7 @@ class ShowcaseProvider:
             git_tools.commit_files(
                 repo_path,
                 "feat: add standardized health check endpoint",
-                author_email="260104759+vindicta-bot@users.noreply.github.com"
+                author_email="260104759+vindicta-bot@users.noreply.github.com",
             )
 
             # 4. Push
@@ -158,7 +195,7 @@ class ShowcaseProvider:
                 repo_path,
                 title="feat: Standardized Health Check",
                 body=f"Automated PR by Vindicta Swarm.\n\nAdds health check for realm: `{realm}`.",
-                reviewer="brandon-fox"
+                reviewer="brandon-fox",
             )
 
             return f"PR Created: {pr_url}"
@@ -193,7 +230,7 @@ class ShowcaseProvider:
             content = (
                 "import time\n\n"
                 "def check_health() -> dict:\n"
-                "    \"\"\"Returns the health status of the service.\"\"\"\n"
+                '    """Returns the health status of the service."""\n'
                 f"    return {{'status': 'ok', 'realm': '{realm}', 'timestamp': time.time()}}\n"
             )
             git_tools.write_file(repo_path, target_file, content)

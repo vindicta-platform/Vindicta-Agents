@@ -20,6 +20,7 @@ from github.Repository import Repository as GHRepo
 @dataclass(frozen=True)
 class IssueResult:
     """Lightweight representation of a created/fetched issue."""
+
     number: int
     title: str
     url: str
@@ -28,6 +29,7 @@ class IssueResult:
 @dataclass(frozen=True)
 class PRResult:
     """Lightweight representation of a created PR."""
+
     number: int
     title: str
     url: str
@@ -89,8 +91,7 @@ class GitHubClient:
             labels=[gh_repo.get_label(lbl) for lbl in labels] if labels else [],
         )
         return [
-            IssueResult(number=i.number, title=i.title, url=i.html_url)
-            for i in issues
+            IssueResult(number=i.number, title=i.title, url=i.html_url) for i in issues
         ]
 
     # ---- pull requests ----

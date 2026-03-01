@@ -45,9 +45,7 @@ class NexusClient:
             trace_id=trace_id,
         )
 
-    async def report_error(
-        self, agent_name: str, trace_id: str, error: str
-    ) -> None:
+    async def report_error(self, agent_name: str, trace_id: str, error: str) -> None:
         """Report that a domain agent node encountered an error."""
         logger.error(
             "nexus_client_report",

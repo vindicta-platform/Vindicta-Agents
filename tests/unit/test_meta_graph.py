@@ -1,7 +1,7 @@
 """Unit tests for the refactored meta_graph module."""
+
 import sys
 import unittest
-from unittest.mock import MagicMock, patch
 
 sys.path.insert(0, "src")
 

@@ -1,7 +1,8 @@
 import pytest
-from unittest.mock import AsyncMock, patch, MagicMock
+from unittest.mock import AsyncMock, patch
 from vindicta_agents.core.base_agent import BaseAgent
 import json
+
 
 @pytest.mark.asyncio
 async def test_agent_connect_success():
@@ -9,9 +10,7 @@ async def test_agent_connect_success():
     Test successful connection to Nexus (Mocked).
     """
     agent = BaseAgent(
-        agent_id="mock-agent",
-        agent_class="UnitTester",
-        realm="test-realm"
+        agent_id="mock-agent", agent_class="UnitTester", realm="test-realm"
     )
 
     with patch("websockets.connect", new_callable=AsyncMock) as mock_connect:
@@ -23,15 +22,14 @@ async def test_agent_connect_success():
         assert agent.status == "Connected"
         mock_connect.assert_called_once_with("ws://mock-nexus/mock-agent")
 
+
 @pytest.mark.asyncio
 async def test_agent_connect_failure():
     """
     Test connection failure handled gracefully.
     """
     agent = BaseAgent(
-        agent_id="mock-agent",
-        agent_class="UnitTester",
-        realm="test-realm"
+        agent_id="mock-agent", agent_class="UnitTester", realm="test-realm"
     )
 
     with patch("websockets.connect", side_effect=Exception("Connection Refused")):
@@ -39,15 +37,14 @@ async def test_agent_connect_failure():
 
         assert agent.status == "Connection Failed"
 
+
 @pytest.mark.asyncio
 async def test_agent_send_envelope():
     """
     Test sending a message (envelope) via WebSocket.
     """
     agent = BaseAgent(
-        agent_id="mock-agent",
-        agent_class="UnitTester",
-        realm="test-realm"
+        agent_id="mock-agent", agent_class="UnitTester", realm="test-realm"
     )
     agent.status = "Connected"
 

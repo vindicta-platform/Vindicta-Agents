@@ -75,9 +75,8 @@ class OllamaLLMProvider:
         Returns a Python dict.
         """
         json_system = (
-            (system + "\n\n" if system else "")
-            + "You MUST respond with valid JSON only. No markdown, no explanation."
-        )
+            system + "\n\n" if system else ""
+        ) + "You MUST respond with valid JSON only. No markdown, no explanation."
         raw = self.generate_text(
             prompt,
             system=json_system,

@@ -43,9 +43,7 @@ async def websocket_endpoint(websocket: WebSocket, agent_id: str):
             )
         )
         await websocket.close()
-        logger.warning(
-            "handshake_throttled", agent_id=agent_id, reason=decision.reason
-        )
+        logger.warning("handshake_throttled", agent_id=agent_id, reason=decision.reason)
         return
 
     await registry.connect(agent_id, websocket)
@@ -70,14 +68,10 @@ async def websocket_endpoint(websocket: WebSocket, agent_id: str):
                     "action": "ACK",
                     "payload": {"status": "Received"},
                 }
-                await registry.send_personal_message(
-                    json.dumps(response), agent_id
-                )
+                await registry.send_personal_message(json.dumps(response), agent_id)
 
             except Exception as e:
-                logger.error(
-                    "message_process_error", agent_id=agent_id, error=str(e)
-                )
+                logger.error("message_process_error", agent_id=agent_id, error=str(e))
                 error_response = {"error": str(e)}
                 await registry.send_personal_message(
                     json.dumps(error_response), agent_id

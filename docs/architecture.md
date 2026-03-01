@@ -8,7 +8,7 @@ Meta-agents are the **builders**. Their primary responsibility is the constructi
 
 - **Primary Domain**: The Codebase, GitHub Pipelines, and Development Process.
 - **Roles**: Agile Delivery Lead (ADL), Architect, Senior Software Engineer (SSE), Product Owner, etc.
-- **Governing Document**: The [Vindicta Agents Constitution](../.specify/memory/constitution.md).
+- **Governing Document**: The [Vindicta Agents Constitution](https://github.com/vindicta-platform/vindicta-platform/blob/main/.specify/memory/constitution.md).
 - **Key Constraints**:
     - **Spec-Driven**: No implementation without an approved SDD bundle.
     - **Economic**: Must operate within the GCP Free Tier.
@@ -22,8 +22,9 @@ Platform agents are the **runtime governor**. They form the operational "nervous
 - **Key Components**:
     - **Nexus Orchestrator**: Coordinates inter-agent communication via WebSocket envelopes.
     - **Axiomatic Supervisor**: Validates all proposed state transitions.
-- **Governing Document**: The [Zero-Order Axioms](../src/vindicta_agents/foundation/axioms.py).
-- **Core Axioms**:
+- **Meta-Agents (The Builders)**: Agents like the ADL, Architect, and SSE that build and maintain the platform. Governed by the [Vindicta Agents Constitution](https://github.com/vindicta-platform/vindicta-platform/blob/main/.specify/memory/constitution.md).
+- **Platform Agents (The Runtime)**: The Nexus Orchestrator and Axiomatic Supervisor that manage agent swarms and validate state transitions against the [Zero-Order Axioms](https://github.com/vindicta-platform/vindicta-platform/blob/main/packages/vindicta-agents/src/vindicta_agents/foundation/axioms.py).
+
     - **AX-01**: Entity Identity (Unique, immutable UUIDs).
     - **AX-02**: Dimensionality (3D Euclidean space boundaries).
     - **AX-03**: Probability Source (Central Entropy Provider).
