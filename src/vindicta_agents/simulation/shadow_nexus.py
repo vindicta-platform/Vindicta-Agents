@@ -33,7 +33,11 @@ class ShadowNexus:
         Returns a report of pass/fail.
         """
         self.load_scenario(scenario)
-        results = {"scenario": scenario.name, "passed": True, "steps": []}
+        results: Dict[str, Any] = {
+            "scenario": scenario.name,
+            "passed": True,
+            "steps": [],
+        }
 
         for action in scenario.actions:
             trace_id = str(uuid.uuid4())

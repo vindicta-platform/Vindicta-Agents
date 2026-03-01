@@ -2,7 +2,7 @@ import pytest
 
 # Mocking the models for test purposes if not importable, but we expect them to be
 try:
-    from vindicta_agents.foundation.axioms import Dimensionality
+    from vindicta_agents.foundation.axioms import Dimensionality  # noqa: F401
     from vindicta_agents.core.middleware import validate_intent
 except ImportError:
     pytest.fail("Could not import middleware or axioms")

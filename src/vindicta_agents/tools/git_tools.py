@@ -12,7 +12,7 @@ from typing import List
 from ..utils.logger import logger
 
 
-def run_cmd(cmd: List[str], cwd: str, sensitive_args: List[str] = None) -> str:
+def run_cmd(cmd: List[str], cwd: str, sensitive_args: List[str] | None = None) -> str:
     """Executes a subprocess command and returns stdout."""
     try:
         if os.name == "nt":

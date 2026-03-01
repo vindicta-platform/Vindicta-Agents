@@ -12,7 +12,7 @@ MESO_REPOS = [
 ]
 
 
-def find_meso_repos(root_path: str = None) -> Dict[str, Dict[str, str]]:
+def find_meso_repos(root_path: str | None = None) -> Dict[str, Dict[str, str]]:
     """
     Detects the presence of meso-repositories in the sibling directories.
     If root_path is not provided, it assumes the parent of the current repo.
