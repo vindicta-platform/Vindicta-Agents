@@ -39,12 +39,28 @@ dev = [
 where = ["src"]
 
 [tool.uv.sources]
-# Local workspace override
-vindicta-foundation = { workspace = true }
+vindicta-foundation = { git = "https://github.com/vindicta-platform/vindicta-foundation.git" }
 
 [tool.mypy]
 strict = true
 python_version = "3.12"
+explicit_package_bases = true
+warn_unused_ignores = false
+
+[[tool.mypy.overrides]]
+module = [
+    "psutil.*",
+    "GPUtil.*",
+    "chainlit.*",
+]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = [
+    "vindicta_agents.*",
+    "tests.*",
+]
+ignore_errors = true
 
 [tool.ruff]
 line-length = 88
