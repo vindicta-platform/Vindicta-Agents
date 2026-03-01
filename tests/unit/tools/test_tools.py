@@ -99,7 +99,7 @@ class TestGitWorkspace:
     def test_checkout_creates_branch(self) -> None:
         from vindicta_agents.tools import git_ops
 
-        with patch.object(git_ops, "git") as mock_git:
+        with patch.object(git_ops, "git") as _:
             ws = git_ops.GitWorkspace("/fake/repo")
             ws.checkout("feature/test", create=True)
             ws._repo.git.checkout.assert_called_once_with("-b", "feature/test")
@@ -107,7 +107,7 @@ class TestGitWorkspace:
     def test_checkout_existing_branch(self) -> None:
         from vindicta_agents.tools import git_ops
 
-        with patch.object(git_ops, "git") as mock_git:
+        with patch.object(git_ops, "git") as _:
             ws = git_ops.GitWorkspace("/fake/repo")
             ws.checkout("main")
             ws._repo.git.checkout.assert_called_once_with("main")
@@ -142,7 +142,7 @@ class TestGitWorkspace:
     def test_add_single_string(self) -> None:
         from vindicta_agents.tools import git_ops
 
-        with patch.object(git_ops, "git") as mock_git:
+        with patch.object(git_ops, "git") as _:
             ws = git_ops.GitWorkspace("/fake/repo")
             ws.add("single.py")
             ws._repo.index.add.assert_called_once_with(["single.py"])

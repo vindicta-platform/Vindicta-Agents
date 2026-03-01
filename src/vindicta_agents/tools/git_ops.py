@@ -66,7 +66,10 @@ class GitWorkspace:
     @property
     def last_commit_message(self) -> str:
         """The message of the most recent commit on HEAD."""
-        return self._repo.head.commit.message.strip()
+        msg = self._repo.head.commit.message
+        if isinstance(msg, bytes):
+            return msg.decode("utf-8").strip()
+        return msg.strip()
 
     # ---- remote operations ----
 

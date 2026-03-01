@@ -25,8 +25,9 @@ def test_find_meso_repos_success(mock_isdir, mock_exists):
     assert repos["vindicta-foundation"]["status"] == "verified"
 
 
+@patch("os.path.isdir")
 @patch("os.path.exists")
-def test_find_meso_repos_missing(mock_exists):
+def test_find_meso_repos_missing(mock_exists, mock_isdir):
     """Test identifying missing repos."""
 
     # Mock that some exist and others don't
@@ -36,6 +37,7 @@ def test_find_meso_repos_missing(mock_exists):
         return True
 
     mock_exists.side_effect = side_effect
+    mock_isdir.side_effect = side_effect
 
     repos = find_meso_repos("c:/Users/bfoxt/vindicta-platform")
 

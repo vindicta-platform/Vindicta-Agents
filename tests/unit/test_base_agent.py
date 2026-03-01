@@ -28,5 +28,5 @@ def test_handshake():
     agent = BaseAgent(
         agent_id="test-agent-3", agent_class="Logos-Historian", realm="platform-docs"
     )
-    assert agent.handshake() == True
+    assert agent.handshake() is True
     assert agent.status == "Online"
