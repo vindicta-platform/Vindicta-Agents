@@ -23,11 +23,11 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Create a status table:
 
      ```text
-     | Checklist | Total | Completed | Incomplete | Status |
-     |-----------|-------|-----------|------------|--------|
-     | ux.md     | 12    | 12        | 0          | ✓ PASS |
-     | test.md   | 8     | 5         | 3          | ✗ FAIL |
-     | security.md | 6   | 6         | 0          | ✓ PASS |
+     | Checklist   | Total | Completed | Incomplete | Status |
+     | ----------- | ----- | --------- | ---------- | ------ |
+     | ux.md       | 12    | 12        | 0          | ✓ PASS |
+     | test.md     | 8     | 5         | 3          | ✗ FAIL |
+     | security.md | 6     | 6         | 0          | ✓ PASS |
      ```
 
    - Calculate overall status:
@@ -103,7 +103,8 @@ You **MUST** consider the user input before proceeding (if not empty).
    - **Task details**: ID, description, file paths, parallel markers [P]
    - **Execution flow**: Order and dependency requirements
 
-6. Execute implementation following the task plan:
+6.<!-- markdownlint-disable MD013 -->
+# Speckit Implementation Workflow
    - **Phase-by-phase execution**: Complete each phase before moving to the next
    - **Respect dependencies**: Run sequential tasks in order, parallel tasks [P] can run together
    - **Follow TDD approach**: Execute test tasks before their corresponding implementation tasks

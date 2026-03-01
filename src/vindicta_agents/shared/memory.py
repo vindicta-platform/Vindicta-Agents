@@ -1,14 +1,16 @@
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 from pydantic import BaseModel, Field
 import uuid
+
 
 class BoardState(BaseModel):
     """
     Canonical Board State.
     Represents the 'Table Top' shared memory.
     """
+
     version: uuid.UUID = Field(default_factory=uuid.uuid4)
-    units: Dict[str, Any] = Field(default_factory=dict) # str = unit_id
+    units: Dict[str, Any] = Field(default_factory=dict)  # str = unit_id
     phase: str = "Deployment"
     turn: int = 1
 
@@ -25,10 +27,12 @@ class BoardState(BaseModel):
             self.turn = delta["turn"]
         self.version = uuid.uuid4()
 
+
 class SharedMemory:
     """
     Singleton manager for the Board State.
     """
+
     _instance = None
     _state: BoardState = BoardState()
 
@@ -43,4 +47,4 @@ class SharedMemory:
         return self._state
 
     def reset(self):
-         self._state = BoardState()
+        self._state = BoardState()

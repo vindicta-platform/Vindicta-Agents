@@ -11,22 +11,34 @@ Execute Monday at 9:30 AM by Product Owner agent.
 // turbo
 1. Identify current week (1-6 in roadmap)
 
-2. Read each product's ROADMAP.md:
-   ```
-   mcp_github-mcp-server_get_file_contents
-   owner: vindicta-platform, repo: [each], path: ROADMAP.md
+2### 1. Define Goal
+
+1. Read `ROADMAP.md`.
+2. Select next prioritized features.
+
+3. Draft Sprint Goal:
+
+   ```markdown
+   # Sprint Goal: [Goal]
+   - Focus: [Theme]
+   - Key Deliverable: [Deliverable]
    ```
 
-3. Create issues for scheduled tasks:
-   ```
-   mcp_github-mcp-server_issue_write
-   method: "create"
+### 2. Create Issues
+
+1. Create GitHub issues for selected features.
+2. Add to Project Board.
+
+3. Assign to specialized roles:
+
+   ```yaml
+   assignees: [senior-dev, junior-dev]
+   ```method: "create"
    title: "[Week X] Task Name"
    body: "## Task\n...\n## Acceptance Criteria\n- [ ] ..."
    labels: ["priority:p1-high", "status:ready"]
    ```
 
-4. Add to Project #4:
    ```powershell
    gh project item-add 4 --owner vindicta-platform --url [issue_url]
    ```

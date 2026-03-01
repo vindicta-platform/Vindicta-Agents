@@ -1,4 +1,5 @@
-# [PROJECT_NAME] Constitution
+<!-- markdownlint-disable MD013 -->
+# Project Constitution
 <!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
 
 ## Core Principles

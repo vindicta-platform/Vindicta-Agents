@@ -1,7 +1,4 @@
-
 import pytest
-from pydantic import ValidationError
-from uuid import uuid4
 
 # Mocking the models for test purposes if not importable, but we expect them to be
 try:
@@ -10,8 +7,10 @@ try:
 except ImportError:
     pytest.fail("Could not import middleware or axioms")
 
+
 def test_validate_intent_valid():
     """Test that valid intents pass."""
+
     # Mocking a WARScribeEntry-like object
     class MockIntent:
         def __init__(self, x, y):
@@ -22,8 +21,10 @@ def test_validate_intent_valid():
     # Validation should succeed (return True or None)
     assert validate_intent(intent) is True
 
+
 def test_validate_intent_invalid_coords():
     """Test that invalid coordinates raise a violation."""
+
     class MockIntent:
         def __init__(self, x, y):
             self.x = x

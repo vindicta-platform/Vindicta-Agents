@@ -32,7 +32,24 @@ Follow TDD/BDD approach:
 1. Write failing test
 2. Implement minimum to pass
 3. Refactor for quality
-4. Repeat
+### 4. Implementation
+
+1. Create feature branch.
+2. Implement code.
+
+3. Test locally:
+
+   ```bash
+   uv run pytest
+   ```
+
+4. Create Pull Request.
+```
+mcp_github-mcp-server_create_pull_request
+- Link to issue
+- Describe changes
+- Tag reviewer (SSE)
+```
 
 ### 5. Self-Review Checklist
 - [ ] All acceptance criteria met
@@ -41,13 +58,6 @@ Follow TDD/BDD approach:
 - [ ] Documentation updated
 - [ ] Commit messages clear
 
-### 6. Create Pull Request
-```
-mcp_github-mcp-server_create_pull_request
-- Link to issue
-- Describe changes
-- Tag reviewer (SSE)
-```
 
 ### 7. Address Feedback
 - Respond to review comments

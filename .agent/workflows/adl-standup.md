@@ -9,10 +9,12 @@ Execute daily at 9:00 AM by Agile Delivery Lead agent.
 ## Steps
 
 // turbo
+### 1. Prepare (5 min)
+
 1. Get today's context:
 
-   - Current week in 6-week roadmap (Feb 4 - Mar 17, 2026)
-   - Calculate: `week = ceil((today - Feb4) / 7)`
+   - Check `task.md` in active workspaces
+   - Check `ROADMAP.md` for sprint goalculate: `week = ceil((today - Feb4) / 7)`
 
 2. Search open issues:
 

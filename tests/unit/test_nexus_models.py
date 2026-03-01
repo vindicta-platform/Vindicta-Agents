@@ -15,7 +15,10 @@ class TestWARScribeEnvelope:
 
     def test_custom_receiver(self):
         env = WARScribeEnvelope(
-            sender="agent-1", receiver="TechPriest", action="DELEGATE", payload={"task": "x"}
+            sender="agent-1",
+            receiver="TechPriest",
+            action="DELEGATE",
+            payload={"task": "x"},
         )
         assert env.receiver == "TechPriest"
 

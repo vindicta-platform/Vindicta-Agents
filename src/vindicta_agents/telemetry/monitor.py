@@ -5,11 +5,13 @@ from datetime import datetime
 from .models import HardwareState, CPUState, MemoryState, GPUState
 from ..utils.logger import logger
 
+
 class HardwareMonitor:
     """
     Monitors system hardware resources (CPU, Memory, GPU).
     Maintains a 1Hz heartbeat to track system health.
     """
+
     def __init__(self, polling_interval: float = 1.0):
         self.polling_interval = polling_interval
         self._running = False
@@ -38,14 +40,14 @@ class HardwareMonitor:
             try:
                 state = self._collect_metrics()
                 self._latest_state = state
-                
+
                 # Notify callbacks
                 for callback in self._callbacks:
                     try:
                         callback(state)
                     except Exception as e:
                         logger.error("monitor_callback_error", error=str(e))
-                        
+
                 await asyncio.sleep(self.polling_interval)
             except Exception as e:
                 logger.error("metrics_collection_error", error=str(e))
@@ -61,32 +63,32 @@ class HardwareMonitor:
         cpu_state = CPUState(
             percent_per_core=cpu_per_core,
             total_percent=cpu_total,
-            frequency_current=current_freq
+            frequency_current=current_freq,
         )
 
         # Memory
         mem = psutil.virtual_memory()
         memory_state = MemoryState(
-            total=mem.total,
-            available=mem.available,
-            percent=mem.percent,
-            used=mem.used
+            total=mem.total, available=mem.available, percent=mem.percent, used=mem.used
         )
 
         # GPU
         gpus = []
         try:
             import GPUtil
+
             gpu_list = GPUtil.getGPUs()
             for gpu in gpu_list:
-                gpus.append(GPUState(
-                    id=gpu.id,
-                    name=gpu.name,
-                    load=gpu.load,
-                    memory_used=gpu.memoryUsed,
-                    memory_total=gpu.memoryTotal,
-                    temperature=gpu.temperature
-                ))
+                gpus.append(
+                    GPUState(
+                        id=gpu.id,
+                        name=gpu.name,
+                        load=gpu.load,
+                        memory_used=gpu.memoryUsed,
+                        memory_total=gpu.memoryTotal,
+                        temperature=gpu.temperature,
+                    )
+                )
         except ImportError:
             # Expected if GPUtil is not installed in the current environment
             pass
@@ -94,8 +96,5 @@ class HardwareMonitor:
             logger.debug("gpu_metrics_collection_failed", error=str(e))
 
         return HardwareState(
-            timestamp=datetime.now(),
-            cpu=cpu_state,
-            memory=memory_state,
-            gpus=gpus
+            timestamp=datetime.now(), cpu=cpu_state, memory=memory_state, gpus=gpus
         )

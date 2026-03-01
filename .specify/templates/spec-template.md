@@ -1,3 +1,4 @@
+<!-- markdownlint-disable MD013 -->
 # Feature Specification: [FEATURE NAME]
 
 **Feature Branch**: `[###-feature-name]`

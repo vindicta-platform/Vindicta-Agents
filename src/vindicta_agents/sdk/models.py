@@ -21,6 +21,7 @@ class RequestPriority(IntEnum):
     Lower values = higher priority.
     P0 (HUMAN) always preempts all other priorities.
     """
+
     HUMAN = 0
     CRITICAL = 1
     HIGH = 2
@@ -34,15 +35,18 @@ class AITask(VindictaModel):
 
     Tasks are queued and executed based on priority and available quota.
     """
+
     name: str = Field(..., description="Human-readable task name")
-    system: Optional[str] = Field(default=None, description="System prompt for the task")
+    system: Optional[str] = Field(
+        default=None, description="System prompt for the task"
+    )
     prompt: str = Field(..., description="The prompt/payload to send")
     model: str = Field(default="gemini-1.5-flash", description="Target model")
     priority: RequestPriority = Field(
         default=RequestPriority.NORMAL,
         description="Task priority level",
     )
-    
+
     history: List[Dict[str, str]] = Field(default_factory=list)
     metadata: dict[str, Any] = Field(default_factory=dict)
     estimated_tokens: Optional[int] = Field(
@@ -61,32 +65,33 @@ class AITask(VindictaModel):
         """Executes the task and returns JSON output (MOCKED for now)."""
         if provider:
             return provider.execute_json(self.system, self.prompt)
-            
+
         # Mocking a list of tasks for the ADL usage pattern
         return [
             {
                 "id": "task-1",
                 "description": "Implement core engine logic",
                 "target_realm": "vindicta-engine",
-                "status": "pending"
+                "status": "pending",
             },
             {
                 "id": "task-2",
                 "description": "Implement warscribe parsing",
                 "target_realm": "warscribe-system",
-                "status": "pending"
+                "status": "pending",
             },
-             {
+            {
                 "id": "task-3",
                 "description": "Implement economy features",
                 "target_realm": "vindicta-economy",
-                "status": "pending"
-            }
+                "status": "pending",
+            },
         ]
 
 
 class TaskResult(VindictaModel):
     """Result of an executed AI task."""
+
     task_id: UUID
     status: Literal["success", "failed", "queued", "cancelled"]
     response: Optional[str] = None
@@ -97,6 +102,7 @@ class TaskResult(VindictaModel):
 
 class QuotaBudget(BaseModel):
     """Available quota budget for a time window (value object)."""
+
     requests_available: int = Field(ge=0)
     tokens_available: int = Field(ge=0)
     window_end: datetime
@@ -110,6 +116,7 @@ class UsageEntry:
 
     IMPORTANT: Never log API keys or sensitive payloads.
     """
+
     timestamp: datetime
     task_id: str
     request_type: Literal["human", "background"]
@@ -125,6 +132,7 @@ class UsageEntry:
 @dataclass
 class TierLimits:
     """API tier rate limits (defaults to Gemini Free Tier)."""
+
     requests_per_minute: int = 15
     tokens_per_minute: int = 1_000_000
     requests_per_day: int = 1500

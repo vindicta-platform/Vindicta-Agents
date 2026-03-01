@@ -1,6 +1,5 @@
-
 import os
-from typing import Dict, List
+from typing import Dict
 
 MESO_REPOS = [
     "vindicta-foundation",
@@ -9,8 +8,9 @@ MESO_REPOS = [
     "vindicta-oracle",
     "vindicta-economy",
     "vindicta-portal",
-    "warscribe-system" # Or platform-core? The prompt listed 7. I'll stick to the approved plan list.
+    "warscribe-system",  # Or platform-core? The prompt listed 7. I'll stick to the approved plan list.
 ]
+
 
 def find_meso_repos(root_path: str = None) -> Dict[str, Dict[str, str]]:
     """
@@ -30,8 +30,8 @@ def find_meso_repos(root_path: str = None) -> Dict[str, Dict[str, str]]:
     for repo in MESO_REPOS:
         repo_path = os.path.join(root_path, repo)
         if os.path.exists(repo_path) and os.path.isdir(repo_path):
-             results[repo] = {"path": repo_path, "status": "verified"}
+            results[repo] = {"path": repo_path, "status": "verified"}
         else:
-             results[repo] = {"path": repo_path, "status": "missing"}
+            results[repo] = {"path": repo_path, "status": "missing"}
 
     return results

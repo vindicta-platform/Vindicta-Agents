@@ -1,5 +1,6 @@
 # [PROJECT NAME] Development Guidelines
-
+<!-- markdownlint-disable MD013 -->
+# Agent Role: {Agent Name}
 Auto-generated from all feature plans. Last updated: [DATE]
 
 ## Active Technologies

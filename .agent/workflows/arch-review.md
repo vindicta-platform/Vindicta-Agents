@@ -24,29 +24,47 @@ Using MCP tools:
 # Check for related patterns
 mcp_github-mcp-server_search_code for similar implementations
 
-# Review existing architecture
-Check relevant ADRs in .specify/decisions/
+## When to Trigger
+
+- New product integration
+- Changing core data models
+- Adding new infrastructure dependency
+
+## Steps
+
+### 1. Gather Context
+
+- Read the proposed change (PR, Issue, or RFC)
+- Check `docs/architecture.md` for alignment
+
+### 2. Impact Assessment
+
+Run dependency check:
+
+```bash
+uv graph
 ```
 
+Identify affected domains.
+
 ### 3. Review Criteria
-- [ ] Aligns with Platform Constitution
-- [ ] Follows established patterns
-- [ ] No circular dependencies
-- [ ] API contracts are backward compatible
-- [ ] Test coverage requirements met
-- [ ] Documentation updated
+
+- [ ] Aligns with Platform Constitution?
+- [ ] Maintains domain isolation?
+- [ ] Scalable?
 
 ### 4. Decision & Documentation
-If approved:
-- Add approval comment to PR/issue
-- Create ADR if significant decision
 
-If changes needed:
+- Add approval comment to PR/issue
+- OR request changes:
+  - Link to specific architecture violation
+  - Suggest alternative pattern
+
 - Comment specific concerns
-- Suggest alternative approaches
-- Offer to pair on solution
 
 ### 5. Success Criteria
-- Decision documented within 24 hours
-- Clear rationale provided
+
+- Decision documented within 24h
+- No architectural debt introduced
 - Follow-up actions identified
+```

@@ -4,7 +4,8 @@
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) running
 - [VS Code](https://code.visualstudio.com/) installed
-- [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) installed
+- [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+  installed
 
 ## Setup
 
@@ -15,11 +16,13 @@
    ```
 
 2. **VS Code will detect `.devcontainer/`** and show a notification:
-   > "Folder contains a Dev Container configuration file. Reopen folder to develop in a container."
+   > "Folder contains a Dev Container configuration file. Reopen folder to develop
+   > in a container."
 
    Click **"Reopen in Container"**.
 
-   Or use the Command Palette: `Ctrl+Shift+P` → **"Dev Containers: Reopen in Container"**
+   Or use the Command Palette: `Ctrl+Shift+P` → **"Dev Containers: Reopen in
+   Container"**
 
 3. **Wait for the build.** First build takes 2-3 minutes. VS Code will:
    - Build the Docker image from `.devcontainer/Dockerfile`
@@ -38,6 +41,7 @@
 
 ## Useful Commands
 
+<!-- markdownlint-disable MD013 -->
 | Action                      | Command                                                        |
 | --------------------------- | -------------------------------------------------------------- |
 | Rebuild container           | `Ctrl+Shift+P` → "Dev Containers: Rebuild Container"           |
@@ -53,3 +57,4 @@
 | Build fails          | Run `Ctrl+Shift+P` → "Dev Containers: Rebuild Without Cache"                   |
 | `bash\r` error       | Image needs rebuild — the Dockerfile includes `dos2unix` to fix this           |
 | GPG key not found    | Check `init-agent.sh` output in the terminal, re-run manually: `init-agent.sh` |
+<!-- markdownlint-enable MD013 -->

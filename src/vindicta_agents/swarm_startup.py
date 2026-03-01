@@ -8,7 +8,6 @@ Usage:
 """
 
 import os
-import sys
 from vindicta_agents.utils.discovery import find_meso_repos
 from vindicta_agents.core.base_agent import BaseAgent
 
@@ -65,7 +64,9 @@ def boot_nexus(platform_root: str | None = None) -> dict:
         realm="vindicta-agents",
     )
     architect.handshake()
-    print(f"\n[NEXUS] Architect Agent registered: {architect.agent_id} [{architect.status}]")
+    print(
+        f"\n[NEXUS] Architect Agent registered: {architect.agent_id} [{architect.status}]"
+    )
 
     # Step 3: Report
     print("\n[NEXUS] ══════════════════════════════════════")

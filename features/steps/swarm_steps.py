@@ -25,10 +25,9 @@ def step_impl_exec_planning(context):
 @then('the "PO" node should generate a Spec')
 def step_impl_check_spec(context):
     assert context.state.get("spec_content") is not None
-    assert (
-        "Spec Creation" in context.state.get("spec_content", "")
-        or "MOCKED EXECUTION" in context.state.get("spec_content", "")
-    )
+    assert "Spec Creation" in context.state.get(
+        "spec_content", ""
+    ) or "MOCKED EXECUTION" in context.state.get("spec_content", "")
 
 
 @then('the "Architect" node should generate a Plan')
