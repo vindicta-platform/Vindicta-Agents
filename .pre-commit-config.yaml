@@ -1,8 +1,7 @@
 repos:
-  - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.21.2
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
     hooks:
-      - id: gitleaks
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: check-yaml
@@ -18,3 +17,8 @@ repos:
     hooks:
       - id: markdownlint-cli2
         args: []
+   - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.21.2
+    hooks:
+      - id: gitleaks
+
