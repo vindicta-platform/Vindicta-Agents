@@ -31,6 +31,9 @@ Dynamic: license-file
 
 # Vindicta Agents
 
+> 📢 **Notice:** This repository is a Component Submodule of the Vindicta Platform Monorepo. For local development, testing, and dependency resolution, please clone the root [vindicta-platform](https://github.com/vindicta-platform/vindicta-platform) repository.
+
+
 SDKs, Workflows, and Swarm for the Vindicta Platform.
 
 ## Installation
