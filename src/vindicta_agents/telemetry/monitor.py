@@ -21,6 +21,8 @@ class HardwareMonitor:
 
     def start(self):
         """Starts the monitoring loop."""
+        if self._running:
+            return
         self._running = True
         self._monitor_task = asyncio.create_task(self._monitor_loop())
 
