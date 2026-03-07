@@ -1,0 +1,844 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Agent SDKs and autonomous workflows for the Vindicta Platform.">
+      
+      
+        <meta name="author" content="Vindicta Platform Contributors">
+      
+      
+        <link rel="canonical" href="https://vindicta-platform.github.io/Vindicta-Agents/roadmap-v0.2.x/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
+    
+    
+      
+        <title>Vindicta-Agents v0.2.x Roadmap - Vindicta Agents</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Outfit:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Outfit";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vindicta-agents-v02x-roadmap" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Vindicta Agents" class="md-header__button md-logo" aria-label="Vindicta Agents" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Vindicta Agents
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Vindicta-Agents v0.2.x Roadmap
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/vindicta-platform/Vindicta-Agents" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    vindicta-platform/Vindicta-Agents
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Vindicta Agents" class="md-nav__button md-logo" aria-label="Vindicta Agents" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Vindicta Agents
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/vindicta-platform/Vindicta-Agents" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    vindicta-platform/Vindicta-Agents
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#problem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#constraints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Constraints
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v020-workspace-isolation-devcontainer-spike" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.2.0 — Workspace Isolation &amp; Devcontainer Spike
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v0.2.0 — Workspace Isolation &amp; Devcontainer Spike">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spike-devcontainer-multi-repo-workspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SPIKE: Devcontainer Multi-Repo Workspace
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v021-multi-repo-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.2.1 — Multi-Repo Operations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v0.2.1 — Multi-Repo Operations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#design-principles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Design Principles
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changes_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workspace-sync-error-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        workspace-sync Error Handling
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v022-pr-lifecycle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.2.2 — PR Lifecycle
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v0.2.2 — PR Lifecycle">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#commit-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Commit Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pr-creation-protocol-mcp-retry-with-memory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PR Creation Protocol (MCP Retry-with-Memory)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changes_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verification
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Verification">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bdd-feature-specs-gherkin-testsfeatures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BDD Feature Specs (Gherkin) — tests/features/
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tdd-test-scripts-aaa-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TDD Test Scripts (AAA Pattern)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="vindicta-agents-v02x-roadmap">Vindicta-Agents v0.2.x Roadmap<a class="headerlink" href="#vindicta-agents-v02x-roadmap" title="Permanent link">&para;</a></h1>
+<h2 id="problem">Problem<a class="headerlink" href="#problem" title="Permanent link">&para;</a></h2>
+<p>v0.1.0 provides agent identity (GPG, PAT, dev container). The gap is <strong>workspace lifecycle</strong> — no tooling for cloning repos, managing branches, or finishing sessions with PRs.</p>
+<h2 id="constraints">Constraints<a class="headerlink" href="#constraints" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Rule</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>No <code>workspace.yml</code></strong> — workspace config is the caller's responsibility</td>
+<td>User feedback</td>
+</tr>
+<tr>
+<td><strong>No custom CLI</strong> — <a href="https://github.com/vindicta-platform/Vindicta-CLI">Vindicta-CLI</a> is the platform CLI</td>
+<td>Constitution</td>
+</tr>
+<tr>
+<td><strong>MCP-first</strong> — if MCP is available, MUST use. <code>gh</code> CLI as fallback</td>
+<td>Constitution</td>
+</tr>
+<tr>
+<td><strong>No templates in <code>.devcontainer/</code></strong> — domain boundary violation</td>
+<td>User feedback</td>
+</tr>
+<tr>
+<td><strong>No constitution enforcement</strong> — that is individual agents' responsibility</td>
+<td>User feedback</td>
+</tr>
+<tr>
+<td><strong>Workspace MUST be locally isolated</strong> — no resource contention</td>
+<td>User feedback</td>
+</tr>
+<tr>
+<td><strong>Atomic commits</strong> — regular, short messages, best practice for clarity</td>
+<td>User feedback</td>
+</tr>
+<tr>
+<td><strong>Chores/docs/fixes to <code>main</code></strong> — keep feature branches concise for human reviewers</td>
+<td>User feedback</td>
+</tr>
+<tr>
+<td><strong>Config-driven</strong> — externalize filter options, no hardcoded groups</td>
+<td>User feedback</td>
+</tr>
+<tr>
+<td><strong>PR summaries include tech debt</strong> — discovered/created issues surfaced</td>
+<td>User feedback</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="v020-workspace-isolation-devcontainer-spike">v0.2.0 — Workspace Isolation &amp; Devcontainer Spike<a class="headerlink" href="#v020-workspace-isolation-devcontainer-spike" title="Permanent link">&para;</a></h2>
+<p><strong>Goal:</strong> Understand how devcontainer workspaces connect to multi-repo setups across IDEs, and ensure local isolation.</p>
+<h3 id="spike-devcontainer-multi-repo-workspace">SPIKE: Devcontainer Multi-Repo Workspace<a class="headerlink" href="#spike-devcontainer-multi-repo-workspace" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p><strong>Note:</strong> This is a research spike before writing code. Output is a tested reference setup, not production tooling.</p>
+</blockquote>
+<p><strong>Questions to answer:</strong>
+1. How does VS Code handle multi-root workspaces inside devcontainers?
+2. How does Antigravity connect to workspaces? Can workspace config be passed in?
+3. Can a devcontainer mount multiple repo directories from the host?
+4. What is the isolation model — one container per repo, or shared container with isolated directories?</p>
+<p><strong>Deliverables:</strong>
+- Sample devcontainer configs for single-repo and multi-repo workspace patterns
+- Tested on VS Code and Docker CLI
+- Documented gotchas (volume mounts, git identity per-repo, branch conflicts)</p>
+<h3 id="changes">Changes<a class="headerlink" href="#changes" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>[NEW]</strong> <code>docs/workspace-patterns.md</code> — reference doc from the spike</li>
+<li><strong>[MODIFY]</strong> <code>Dockerfile.slim</code> — workspace isolation structure (<code>/workspace/&lt;repo&gt;/</code>)</li>
+<li><strong>[MODIFY]</strong> <code>init-agent.sh</code> — detect repos in <code>/workspace/</code>, print status</li>
+</ul>
+<hr />
+<h2 id="v021-multi-repo-operations">v0.2.1 — Multi-Repo Operations<a class="headerlink" href="#v021-multi-repo-operations" title="Permanent link">&para;</a></h2>
+<p><strong>Goal:</strong> Utilities for common multi-repo operations using <code>gh</code> CLI and MCP.</p>
+<h3 id="design-principles">Design Principles<a class="headerlink" href="#design-principles" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>gh</code> CLI + MCP are primary — no competing CLI</li>
+<li>Config-driven — repo lists from external config or args, never hardcoded</li>
+<li>Workspace isolation — each repo is its own git directory</li>
+<li>Stash safety — warn and prompt, never auto-stash</li>
+<li>No data loss — never force-checkout without confirmation</li>
+</ul>
+<h3 id="changes_1">Changes<a class="headerlink" href="#changes_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>[NEW]</strong> <code>.devcontainer/bin/workspace-status</code> — multi-repo status table (branch, modified, ahead/behind)</li>
+<li><strong>[NEW]</strong> <code>.devcontainer/bin/workspace-sync</code> — fetch/pull all repos with error handling</li>
+</ul>
+<h3 id="workspace-sync-error-handling">workspace-sync Error Handling<a class="headerlink" href="#workspace-sync-error-handling" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dirty working tree</td>
+<td>Warn + skip (never auto-stash)</td>
+</tr>
+<tr>
+<td>Merge conflict</td>
+<td>Abort pull, report, continue other repos</td>
+</tr>
+<tr>
+<td>Remote branch deleted</td>
+<td>Warn, switch to main</td>
+</tr>
+<tr>
+<td>Network timeout</td>
+<td>Retry once, then skip</td>
+</tr>
+<tr>
+<td>Repo missing</td>
+<td>Skip with warning</td>
+</tr>
+<tr>
+<td>Detached HEAD</td>
+<td>Warn, no pull</td>
+</tr>
+<tr>
+<td>Rebase conflict</td>
+<td>Abort rebase, restore state, report</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="v022-pr-lifecycle">v0.2.2 — PR Lifecycle<a class="headerlink" href="#v022-pr-lifecycle" title="Permanent link">&para;</a></h2>
+<p><strong>Goal:</strong> Streamline commit → push → PR with atomic commits, MCP-first PR creation, human-reviewer-friendly output.</p>
+<h3 id="commit-rules">Commit Rules<a class="headerlink" href="#commit-rules" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Rule</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Commits MUST be atomic</td>
+<td>One logical change per commit</td>
+</tr>
+<tr>
+<td>Messages ≤72 chars (subject)</td>
+<td>Git best practice</td>
+</tr>
+<tr>
+<td>Conventional commits</td>
+<td><code>feat:</code>, <code>fix:</code>, <code>chore:</code>, <code>docs:</code></td>
+</tr>
+<tr>
+<td>Chores/docs/fixes to <code>main</code></td>
+<td>Keep feature branches concise</td>
+</tr>
+<tr>
+<td>Feature branches short-lived</td>
+<td>Reduce conflict risk</td>
+</tr>
+</tbody>
+</table>
+<h3 id="pr-creation-protocol-mcp-retry-with-memory">PR Creation Protocol (MCP Retry-with-Memory)<a class="headerlink" href="#pr-creation-protocol-mcp-retry-with-memory" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>1. MCP available?  → Use mcp_github-mcp-server_create_pull_request
+2. MCP errors?     → Attempt resolution (up to 3 troubleshooting steps)
+3. MCP fails?      → Fall back to `gh pr create`, record failure timestamp
+4. gh fails?       → Ask for user support
+5. Next PR call    → If 5 min elapsed since MCP failure, retry MCP first
+                     Otherwise use gh directly
+</code></pre></div>
+<blockquote>
+<p>Failures are remembered but MCP is periodically retried to restore priority. Never permanently degrade to <code>gh</code>.</p>
+</blockquote>
+<h3 id="changes_2">Changes<a class="headerlink" href="#changes_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>[NEW]</strong> <code>.devcontainer/bin/workspace-finish</code> — commit, push, create PRs (draft, dry-run modes)</li>
+<li><strong>[NEW]</strong> <code>.devcontainer/bin/workspace-pr</code> — PR status table across workspace</li>
+</ul>
+<hr />
+<h2 id="version-summary">Version Summary<a class="headerlink" href="#version-summary" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Version</th>
+<th>Name</th>
+<th>Delivers</th>
+<th>Size</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>v0.2.0</strong></td>
+<td>Workspace Spike</td>
+<td>Research + reference configs</td>
+<td>Small</td>
+</tr>
+<tr>
+<td><strong>v0.2.1</strong></td>
+<td>Multi-Repo Ops</td>
+<td><code>workspace-status</code>, <code>workspace-sync</code></td>
+<td>Medium</td>
+</tr>
+<tr>
+<td><strong>v0.2.2</strong></td>
+<td>PR Lifecycle</td>
+<td><code>workspace-finish</code>, <code>workspace-pr</code></td>
+<td>Medium</td>
+</tr>
+</tbody>
+</table>
+<h2 id="verification">Verification<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h2>
+<h3 id="bdd-feature-specs-gherkin-testsfeatures">BDD Feature Specs (Gherkin) — <code>tests/features/</code><a class="headerlink" href="#bdd-feature-specs-gherkin-testsfeatures" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">Feature:</span><span class="nf"> Workspace Sync</span>
+<span class="nf">  </span><span class="k">Scenario:</span><span class="nf"> Sync clean workspace</span>
+<span class="k">    Given </span><span class="nf">all repos have clean working trees</span>
+<span class="nf">    </span><span class="k">When </span><span class="nf">I run workspace-sync</span>
+<span class="nf">    </span><span class="k">Then </span><span class="nf">all repos are updated to latest remote</span>
+
+<span class="nf">  </span><span class="k">Scenario:</span><span class="nf"> Sync with dirty repo</span>
+<span class="k">    Given </span><span class="nf">&quot;</span><span class="s">Vindicta-Core</span><span class="nf">&quot; has uncommitted changes</span>
+<span class="nf">    </span><span class="k">When </span><span class="nf">I run workspace-sync</span>
+<span class="nf">    </span><span class="k">Then </span><span class="nf">&quot;</span><span class="s">Vindicta-Core</span><span class="nf">&quot; is skipped with a warning</span>
+<span class="nf">    </span><span class="k">And </span><span class="nf">all other repos are synced</span>
+</code></pre></div>
+<h3 id="tdd-test-scripts-aaa-pattern">TDD Test Scripts (AAA Pattern)<a class="headerlink" href="#tdd-test-scripts-aaa-pattern" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Validates</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>test-workspace-status.sh</code></td>
+<td>Status across multi-repo workspace</td>
+</tr>
+<tr>
+<td><code>test-workspace-sync.sh</code></td>
+<td>Fetch/pull with edge case safety</td>
+</tr>
+<tr>
+<td><code>test-workspace-finish.sh</code></td>
+<td>Commit → push → PR (dry-run)</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
