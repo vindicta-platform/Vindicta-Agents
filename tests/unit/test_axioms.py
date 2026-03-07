@@ -23,9 +23,9 @@ def test_dimensionality_valid():
     """Test valid coordinates."""
     # 44x60 bounds, so (10, 20, 0) is valid
     dim = Dimensionality(x=10.0, y=20.0, z=0.0)
-    assert dim.x == 10.0
-    assert dim.y == 20.0
-    assert dim.z == 0.0
+    assert dim.x == pytest.approx(10.0)
+    assert dim.y == pytest.approx(20.0)
+    assert dim.z == pytest.approx(0.0)
 
 
 def test_dimensionality_negative_coordinates():
