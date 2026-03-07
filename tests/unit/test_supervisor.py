@@ -1,3 +1,4 @@
+import pytest
 from vindicta_agents.supervisor.gatekeeper import (
     AxiomaticSupervisor,
     AxiomApproval,
@@ -32,7 +33,7 @@ def test_valid_move():
     assert result.approved is True
 
     # Verify memory updated
-    assert SharedMemory().state.units["unit_1"]["x"] == 10.0
+    assert SharedMemory().state.units["unit_1"]["x"] == pytest.approx(10.0)
 
 
 def test_invalid_move_out_of_bounds():

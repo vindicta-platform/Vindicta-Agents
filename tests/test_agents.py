@@ -1,5 +1,6 @@
 """Tests for vindicta-agents SDK models."""
 
+import pytest
 from uuid import UUID, uuid4
 from datetime import datetime
 
@@ -51,7 +52,7 @@ def test_quota_budget():
         window_end=datetime.utcnow(),
     )
     assert budget.human_reserve_percent == 20
-    assert budget.confidence == 0.8
+    assert budget.confidence == pytest.approx(0.8)
 
 
 def test_tier_limits_defaults():

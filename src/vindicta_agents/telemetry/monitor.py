@@ -17,15 +17,21 @@ class HardwareMonitor:
         self._running = False
         self._latest_state: Optional[HardwareState] = None
         self._callbacks: List[Callable[[HardwareState], None]] = []
+        self._monitor_task: Optional[asyncio.Task[None]] = None
 
     def start(self):
         """Starts the monitoring loop."""
+        if self._running:
+            return
         self._running = True
-        asyncio.create_task(self._monitor_loop())
+        self._monitor_task = asyncio.create_task(self._monitor_loop())
 
     def stop(self):
         """Stops the monitoring loop."""
         self._running = False
+        if self._monitor_task is not None:
+            self._monitor_task.cancel()
+            self._monitor_task = None
 
     def register_callback(self, callback: Callable[[HardwareState], None]):
         """Registers a callback to receive hardware state updates."""
